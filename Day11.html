@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NLP Basics: Bag-of-Words & Word Embeddings | From Text to Vectors</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9f7f3 0%, #e8e6e1 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #1f1a15;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(115deg, #2d3e50 0%, #1f4e6e 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 850px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #d97706;
+            color: white;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #f0ebe2;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #1f4e6e, #d97706);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #d97706;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #b45309;
+            font-size: 1.05rem;
+            margin: 1rem 0 0.3rem 0;
+        }
+
+        .insight-box {
+            background: #fffaf0;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .example-box {
+            background: #f8f6f2;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            border: 1px solid #e5d9cc;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', 'SF Mono', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .compare-table th, .compare-table td {
+            border: 1px solid #ddd2c0;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background: #f6ede3;
+            font-weight: 700;
+        }
+
+        .highlight {
+            background: #fde68a;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #7b341e;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #ddd2c0, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fefcf9;
+            color: #2d3e50;
+        }
+
+        .embedding-viz {
+            background: #fef7e0;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 760px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .code-block {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📝 NLP Basics: Bag-of-Words & Word Embeddings</h1>
+        <p>Transforming human language into numerical representations — from sparse vectors to dense semantic spaces.</p>
+        <div class="badge">Day 11 — Natural Language Processing Foundations</div>
+    </div>
+    <div class="content">
+
+        <!-- Introduction: What & Why text vectorization -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📌 Why Convert Text to Vectors?</h2>
+                <div class="subhead">✦ The core problem</div>
+                <p>Machine learning models work with numbers, not raw strings. NLP pipelines must encode text into numerical representations that capture meaning, syntax, and semantics.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why two approaches (BoW vs Embeddings)?</strong> — Bag-of-words is simple and interpretable but loses word order & semantics. Embeddings capture semantic similarity (e.g., "king" ~ "queen") but require more data or pre-trained models.
+                </div>
+                <div class="example-box">
+                    <strong>💡 Example task:</strong> Sentiment analysis of movie reviews: "This movie was great, fantastic acting!" → numerical vector → classifier output: positive.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚙️ The NLP Pipeline Overview</h2>
+                <div class="subhead">🧩 Typical steps</div>
+                <ul style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                    <li><span class="highlight">Text preprocessing:</span> Lowercasing, tokenization, stopword removal.</li>
+                    <li><span class="highlight">Vectorization:</span> BoW, TF-IDF, or Embeddings (Word2Vec, GloVe).</li>
+                    <li><span class="highlight">Model training:</span> Classifier / regressor / sequence model.</li>
+                </ul>
+                <div class="insight-box">
+                    ✅ <strong>Key trade-off:</strong> BoW is fast, sparse, counts words. Embeddings are dense, low-dimensional, capture relationships.
+                </div>
+            </div>
+        </div>
+
+        <!-- Bag-of-Words Deep Dive -->
+        <div class="card">
+            <h2>📚 Bag-of-Words (BoW) & TF-IDF</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">✦ What is BoW?</div>
+                    <p>Creates a vocabulary of all unique words. Each document becomes a vector of word counts (frequency). Ignores grammar and word order.</p>
+                    <div class="code-block">
+# Example: two documents
+doc1 = "the cat sat on the mat"
+doc2 = "the dog sat on the log"
+
+Vocabulary = ["cat", "dog", "mat", "log", "on", "sat", "the"]
+BoW vectors:
+doc1 = [1, 0, 1, 0, 1, 1, 2]  # "the" appears twice
+doc2 = [0, 1, 0, 1, 1, 1, 2]
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">✦ TF-IDF (Term Frequency-Inverse Document Frequency)</div>
+                    <p>Weights words by importance: penalizes common words across documents, boosts rare informative words.</p>
+                    <div class="insight-box">
+                        📊 <strong>Why TF-IDF better than raw counts?</strong> — Reduces impact of stopwords ("the", "and") and highlights distinctive terms.
+                    </div>
+                    <div class="code-block">
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+# BoW
+vectorizer = CountVectorizer()
+bow = vectorizer.fit_transform(["text corpus here"])
+
+# TF-IDF
+tfidf = TfidfVectorizer()
+tfidf_matrix = tfidf.fit_transform(documents)
+                    </div>
+                </div>
+            </div>
+            <div class="example-box">
+                🎯 <strong>Where BoW shines:</strong> Spam detection, document classification, topic modeling (LDA), when interpretability matters.
+            </div>
+        </div>
+
+        <!-- Word Embeddings Deep Dive -->
+        <div class="card">
+            <h2>🧠 Word Embeddings: Dense Semantic Vectors</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">✦ What are embeddings?</div>
+                    <p>Dense, low-dimensional vectors (e.g., 50-300 dimensions) where semantically similar words have similar vector representations. Learned from large text corpora using neural networks (Word2Vec, GloVe, FastText).</p>
+                    <div class="embedding-viz">
+                        📐 king → [0.2, -0.4, 0.7, ...]<br>
+                        queen → [0.21, -0.39, 0.71, ...]  (close!)<br>
+                        Semantic analogies: "king - man + woman ≈ queen"
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">✦ How they capture meaning</div>
+                    <p><span class="highlight">Distributional hypothesis:</span> "You shall know a word by the company it keeps." Words appearing in similar contexts have similar meanings.</p>
+                    <div class="code-block">
+# Using pre-trained embeddings (GloVe / Word2Vec)
+import gensim.downloader as api
+model = api.load("glove-twitter-25")  # 25-dim vectors
+vec = model["apple"]    # dense vector
+similar = model.most_similar("king", topn=3)
+print(similar)  # [('queen', 0.78), ('prince', 0.69), ...]
+                    </div>
+                </div>
+            </div>
+            <div class="insight-box">
+                💡 <strong>Why embeddings dominate modern NLP:</strong> Capture synonymy, analogy, transfer learning (use pre-trained on millions of docs). Essential for deep learning models (RNNs, Transformers).
+            </div>
+        </div>
+
+        <!-- What/Why/How/Where comparison table -->
+        <div class="card">
+            <h2>📋 Complete Reference: BoW/TF-IDF vs Word Embeddings</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Feature</th><th>Bag-of-Words / TF-IDF</th><th>Word Embeddings</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>What</strong></td><td>Sparse, high-dimensional count/weight vectors</td><td>Dense, low-dimensional learned vectors</td></tr>
+                    <tr><td><strong>Why choose</strong></td><td>Simple, interpretable, works for small datasets</td><td>Semantic similarity, context-aware, transfer learning</td></tr>
+                    <tr><td><strong>How it works</strong></td><td>Vocabulary lookup, counting or TF-IDF weighting</td><td>Neural prediction models (CBOW, Skip-gram) or matrix factorization</td></tr>
+                    <tr><td><strong>Where used</strong></td><td>Traditional ML (Naive Bayes, SVM), spam filtering, topic models</td><td>Deep learning (RNN, LSTM, BERT), chatbots, machine translation, sentiment analysis</td></tr>
+                    <tr><td><strong>Pro/Cons</strong></td><td>No semantics, high-dimensional, order lost. (+) fast, no training</td><td>Captures meaning, dense, pre-trained available. (-) needs large corpus for training</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Real-world case study: Sentiment Analysis -->
+        <div class="card">
+            <h2>🔎 Case Study: Sentiment Analysis on Movie Reviews</h2>
+            <p><strong>Dataset:</strong> IMDB reviews (positive/negative). Compare BoW + logistic regression vs embedding-based neural network.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📌 BoW + Logistic Regression</div>
+                    <div class="code-block">
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+
+vectorizer = TfidfVectorizer(max_features=5000)
+X_train = vectorizer.fit_transform(reviews_train)
+clf = LogisticRegression()
+clf.fit(X_train, y_train)
+# Accuracy: ~88-89% on IMDB
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">📌 Embedding + Shallow NN</div>
+                    <div class="code-block">
+# Using pre-trained GloVe + simple average
+import numpy as np
+def get_avg_embedding(text, model, word2idx):
+    vectors = [model[word] for word in text if word in word2idx]
+    return np.mean(vectors, axis=0) if vectors else np.zeros(100)
+
+X_emb = [get_avg_embedding(tok, glove, ...) for tok in tokenized_reviews]
+clf = LogisticRegression()
+clf.fit(X_emb, y_train)
+# Accuracy: ~90-91% (captures semantics better)
+                    </div>
+                </div>
+            </div>
+            <div class="insight-box">
+                🎯 <strong>Conclusion:</strong> Embeddings provide a performance edge, especially when semantic similarity matters (e.g., "great" ≈ "awesome"). BoW is faster and interpretable.
+            </div>
+        </div>
+
+        <!-- Advanced: Contextual Embeddings (BERT) -->
+        <div class="card">
+            <h2>🚀 Beyond Static Embeddings: Contextualized Representations</h2>
+            <p>Traditional Word2Vec/GloVe produce one vector per word regardless of context. Modern models (ELMo, BERT, GPT) generate <span class="highlight">dynamic embeddings</span> based on surrounding words.</p>
+            <div class="example-box">
+                <strong>💡 Example:</strong> "bank" in "river bank" vs "money bank" → different vectors. BERT uses attention to encode context.
+            </div>
+            <div class="code-block">
+# Using transformers library (Hugging Face)
+from transformers import AutoTokenizer, AutoModel
+import torch
+
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = AutoModel.from_pretrained("bert-base-uncased")
+inputs = tokenizer("I love NLP", return_tensors="pt")
+outputs = model(**inputs)
+# outputs.last_hidden_state contains contextual embeddings
+            </div>
+            <div class="insight-box">
+                🌍 <strong>Where BERT-style embeddings used:</strong> State-of-the-art for question answering, named entity recognition, text classification — virtually every modern NLP system.
+            </div>
+        </div>
+
+        <!-- Where in Industry: Applications -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>🌍 Where BoW & Embeddings Power Real Systems</h2>
+                <ul style="margin-left: 1.2rem;">
+                    <li><strong>Search Engines:</strong> TF-IDF for initial retrieval + embeddings for semantic ranking.</li>
+                    <li><strong>Chatbots:</strong> Embeddings capture intent similarity (e.g., "book flight" vs "reserve ticket").</li>
+                    <li><strong>Recommendation Systems:</strong> Document embeddings for content similarity.</li>
+                    <li><strong>Healthcare:</strong> BoW for clinical notes classification (fast, interpretable).</li>
+                    <li><strong>Legal Tech:</strong> Embeddings for contract similarity search.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>📊 Preprocessing & Best Practices</h2>
+                <div class="subhead">🔧 Before vectorization</div>
+                <ul>
+                    <li>Tokenization: split text into words/subwords.</li>
+                    <li>Lowercasing (reduces vocabulary size).</li>
+                    <li>Stopword removal (optional: "the", "a", "is").</li>
+                    <li>Stemming/Lemmatization (reduce to root: "running" → "run").</li>
+                </ul>
+                <div class="code-block">
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+stemmer = PorterStemmer()
+tokens = ["running", "flies"]
+stems = [stemmer.stem(t) for t in tokens]  # ["run", "fli"]
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual analogy & takeaway -->
+        <div class="card">
+            <h2>🧪 Intuition: Embedding Space Analogy</h2>
+            <div class="embedding-viz" style="background:#eef2ff;">
+                🗺️ Imagine mapping words onto a 2D semantic map:<br>
+                "king" 👑 → (0.8, 0.2)<br>
+                "queen" 👸 → (0.79, 0.18)<br>
+                "apple" 🍎 → (-0.5, 0.9)<br>
+                Distance in embedding space corresponds to semantic relatedness. BoW would see all words as orthogonal dimensions!
+            </div>
+            <div class="insight-box" style="margin-top: 1rem;">
+                ✅ <strong>Final advice:</strong> Start with TF-IDF + linear model for baseline. If you need semantics or high accuracy, move to pre-trained embeddings (Word2Vec, GloVe, or BERT). For deep learning, always use embeddings as input layer.
+            </div>
+        </div>
+
+        <!-- Summary section -->
+        <div style="background: #fef9eb; border-radius: 1.2rem; padding: 1.3rem 1.5rem; border-left: 6px solid #d97706; margin-top: 0.8rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🎯 Day 11 Core Takeaways — NLP Vectorization:</p>
+            <p>✔ <strong>Bag-of-Words / TF-IDF:</strong> Sparse, interpretable, counts words. Great for baselines and small datasets.<br>
+            ✔ <strong>Word Embeddings:</strong> Dense vectors capturing semantics, analogies, and similarity. Essential for deep learning.<br>
+            ✔ <strong>What:</strong> BoW = frequency matrix. Embeddings = learned distributed representations.<br>
+            ✔ <strong>Why:</strong> Machines need numbers; choices depend on interpretability vs semantic richness.<br>
+            ✔ <strong>How:</strong> Scikit-learn for BoW/TF-IDF; Gensim, spaCy, or transformers for embeddings.<br>
+            ✔ <strong>Where:</strong> Sentiment analysis, search, translation, chatbots — every NLP pipeline starts here.</p>
+        </div>
+    </div>
+    <footer>
+        📝 From word counts to semantic vectors — mastering text representation is the first step toward human-like language understanding.
+    </footer>
+</div>
+</body>
+</html>
