@@ -5,7 +5,7 @@
    <h2>3‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day3.html
 <h2>4‑Day -Linear Regression & Gradient Descent Intuition </h2> https://fedexdilip-01.github.io/AI14/Day4.html
 <h2>5‑Day -Classification Mastery: Logistic Regression & k-NN </h2> https://fedexdilip-01.github.io/AI14/Day5.html
-<h2>6‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day6.html
+<h2>6‑Day -Evaluation Metrics: Accuracy · Precision · Recall · F1 Score </h2> https://fedexdilip-01.github.io/AI14/Day6.html
 <h2>7‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day7.html
 <h2>8‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day8.html
 <h2>9‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day9.html
