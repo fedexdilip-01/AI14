@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Build a Simple RAG App: Retrieval-Augmented Generation | LLM + Vector DB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0fdf4 0%, #d9f0e5 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #0c2e1f;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(115deg, #0f3b2c 0%, #1f6e4a 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 850px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #f97316;
+            color: white;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #d9f0e5;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #1f6e4a, #f97316);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #f97316;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #b45309;
+            font-size: 1.05rem;
+            margin: 1rem 0 0.3rem 0;
+        }
+
+        .insight-box {
+            background: #f0fdf4;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #2e7d5e;
+        }
+
+        .example-box {
+            background: #fef9f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            border: 1px solid #ffe2bf;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0b0f19;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', 'SF Mono', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .compare-table th, .compare-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background: #eef2ff;
+            font-weight: 700;
+        }
+
+        .highlight {
+            background: #fde68a;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #7b341e;
+        }
+
+        .flow-step {
+            background: #e6f7ec;
+            border-radius: 1rem;
+            padding: 0.7rem;
+            margin: 0.5rem 0;
+            text-align: center;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbd5e1, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fcfdfe;
+            color: #1f6e4a;
+        }
+
+        @media (max-width: 760px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .code-block {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🔍 Build a Simple RAG App: Retrieval-Augmented Generation</h1>
+        <p>Combine vector search + LLMs to create fact-grounded, up-to-date AI systems — without retraining.</p>
+        <div class="badge">Day 13 — Advanced LLM Applications | RAG in Practice</div>
+    </div>
+    <div class="content">
+
+        <!-- What & Why RAG -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📌 What is RAG?</h2>
+                <div class="subhead">✦ Retrieval-Augmented Generation</div>
+                <p>RAG is an architecture that retrieves relevant documents from a knowledge base (vector database) and injects them into the LLM prompt. The LLM then generates answers grounded in retrieved context.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why RAG over plain LLM?</strong> — LLMs have limited knowledge (cutoff date) and hallucinate. RAG provides real-time, verifiable, domain-specific information. No fine-tuning needed.
+                </div>
+                <div class="example-box">
+                    <strong>💡 Example scenario:</strong> Ask "What is our company's refund policy?" → RAG retrieves latest policy PDF chunk → LLM answers accurately with citation.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚙️ How RAG Works (The Pipeline)</h2>
+                <div class="flow-step">📄 <strong>Step 1: Indexing</strong> — Chunk documents → Generate embeddings → Store in vector DB.</div>
+                <div class="flow-step">🔎 <strong>Step 2: Retrieval</strong> — Embed user query → Find top-k similar chunks (cosine similarity).</div>
+                <div class="flow-step">🤖 <strong>Step 3: Generation</strong> — Inject retrieved chunks + user query into LLM prompt → Generate grounded answer.</div>
+                <div class="code-block">
+# Simplified RAG flow pseudo-code
+query = "What are RAG benefits?"
+query_embedding = embed(query)
+chunks = vector_db.search(query_embedding, top_k=3)
+prompt = f"Context: {chunks}\nQuestion: {query}\nAnswer based on context:"
+response = llm.generate(prompt)
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Python Example -->
+        <div class="card">
+            <h2>🐍 Full RAG Implementation (Python + LangChain + ChromaDB + OpenAI)</h2>
+            <div class="subhead">✦ Build a document Q&A system from scratch</div>
+            <div class="code-block">
+# Install: pip install langchain chromadb openai tiktoken
+
+from langchain.document_loaders import TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import RetrievalQA
+
+# 1. Load and chunk documents
+loader = TextLoader("company_policy.txt")
+documents = loader.load()
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+chunks = text_splitter.split_documents(documents)
+
+# 2. Create vector store (embeddings + Chroma)
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma.from_documents(chunks, embeddings)
+
+# 3. Set up RAG chain
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vectorstore.as_retriever(search_kwargs={"k": 3})
+)
+
+# 4. Query
+response = qa_chain.run("What is the remote work policy?")
+print(response)
+            </div>
+            <div class="insight-box">
+                🚀 <strong>Key components:</strong> Document loader → Chunker → Embedder (OpenAI, HuggingFace) → Vector DB (Chroma, Pinecone, FAISS) → LLM (GPT, Claude, Llama).
+            </div>
+        </div>
+
+        <!-- Hands-on Minimal RAG without LangChain -->
+        <div class="card">
+            <h2>🔧 Minimal RAG from Scratch (NumPy + OpenAI API)</h2>
+            <div class="code-block">
+import numpy as np
+import openai
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Mock document chunks
+docs = [
+    "RAG reduces hallucinations by grounding LLM in retrieved facts.",
+    "Vector databases store embeddings for fast similarity search.",
+    "GPT-4 has knowledge cutoff of April 2023."
+]
+# Simulated embeddings (in practice, use OpenAI's embedding API)
+doc_embeds = np.random.rand(3, 384)
+query = "How does RAG improve LLM accuracy?"
+query_embed = np.random.rand(1, 384)
+
+# Retrieve top chunk
+similarities = cosine_similarity(query_embed, doc_embeds)[0]
+top_idx = np.argmax(similarities)
+context = docs[top_idx]
+
+# LLM generation
+prompt = f"Context: {context}\nQuestion: {query}\nAnswer using context:"
+response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[{"role": "user", "content": prompt}]
+)
+print(response.choices[0].message.content)
+            </div>
+            <div class="example-box">
+                📌 <strong>Real embedding step:</strong> Use `openai.Embedding.create()` or HuggingFace `sentence-transformers` to generate actual embeddings.
+            </div>
+        </div>
+
+        <!-- What/Why/How/Where Table -->
+        <div class="card">
+            <h2>📋 Complete Reference: RAG Components</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Component</th><th>What</th><th>Why</th><th>How (Tools)</th><th>Where Used</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Document Chunking</strong></td><td>Split long docs into smaller pieces.</td><td>Fits LLM context window, improves retrieval granularity.</td><td>RecursiveCharacterTextSplitter (LangChain), manual splitting.</td><td>All RAG pipelines baseline.</td></tr>
+                    <tr><td><strong>Embedding Model</strong></td><td>Converts text to dense vectors.</td><td>Captures semantic meaning for similarity search.</td><td>OpenAI ada-002, HuggingFace all-MiniLM-L6-v2.</td><td>Search, clustering, retrieval.</td></tr>
+                    <tr><td><strong>Vector Database</strong></td>:< Stores embeddings with indexing for fast retrieval.</td>:< Efficient similarity search at scale.</td><td>Chroma (lightweight), Pinecone (cloud), FAISS (local).</td><td>Production RAG, semantic search. </td>
+                </tr>
+                <tr><td><strong>LLM (Generator)</strong></td><td>Large language model that reads retrieved context + query.</td><td>Generates final, grounded answer.</td><td>GPT-4, Claude, Llama, Gemini.</td><td>Answer generation, summarization.</td>
+                </tr>
+                <tr><td><strong>RAG Chain</strong></td><td>Orchestrates retrieval + generation.</td><td>Connects all components seamlessly.</td><td>LangChain RetrievalQA, LlamaIndex.</td><td>End-to-end Q&A systems.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Real-World Case Study -->
+        <div class="card">
+            <h2>🏢 Case Study: Internal Knowledge Base Chatbot</h2>
+            <p><strong>Problem:</strong> Employees waste hours searching HR policies, engineering wikis, and sales playbooks.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📌 RAG Solution</div>
+                    <ul>
+                        <li>Index all internal docs (Notion, Confluence, Google Drive).</li>
+                        <li>Chunk and embed with sentence-transformers.</li>
+                        <li>Store in Pinecone / Chroma.</li>
+                        <li>Query via Slack bot using GPT-4.</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="subhead">✅ Impact</div>
+                    <ul>
+                        <li>75% reduction in support tickets.</li>
+                        <li>Answers with source citations (increased trust).</li>
+                        <li>Real-time updates (re-index on document change).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-block">
+# Slack bot integration pseudo
+@slack_event.on_message
+def handle_question(message):
+    query = message['text']
+    context = vector_db.similarity_search(query, k=3)
+    prompt = f"Context:{context}\nQ:{query}\nA:"
+    answer = llm.generate(prompt)
+    send_reply(answer + "\n\nSources: " + context.sources)
+            </div>
+        </div>
+
+        <!-- Advanced: RAG Evaluation & Enhancements -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📊 RAG Evaluation Metrics</h2>
+                <div class="subhead">✦ How to measure RAG quality</div>
+                <ul>
+                    <li><span class="highlight">Faithfulness:</span> Does answer contradict retrieved context?</li>
+                    <li><span class="highlight">Answer Relevance:</span> How well does answer address query?</li>
+                    <li><span class="highlight">Context Relevancy:</span> Are retrieved chunks actually useful?</li>
+                </ul>
+                <div class="insight-box">
+                    🛠️ <strong>Tools:</strong> RAGAS, TruLens, DeepEval — use LLM-as-judge for automated evaluation.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚡ Advanced RAG Techniques</h2>
+                <div class="subhead">✦ Beyond naive RAG</div>
+                <ul>
+                    <li><span class="highlight">HyDE:</span> Generate hypothetical answer, then retrieve.</li>
+                    <li><span class="highlight">Self-RAG:</span> LLM decides when to retrieve.</li>
+                    <li><span class="highlight">Re-ranking:</span> Reorder retrieved chunks with cross-encoder.</li>
+                    <li><span class="highlight">Parent Document Retriever:</span> Retrieve chunks, return larger context.</li>
+                </ul>
+                <div class="example-box">
+                    💡 <strong>Where to apply:</strong> High-stakes domains (legal, medical) where retrieval accuracy is critical.
+                </div>
+            </div>
+        </div>
+
+        <!-- Where RAG Powers Real Systems -->
+        <div class="card">
+            <h2>🌍 Where RAG is Used in Production Today</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Industry</th><th>Use Case</th><th>Example</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Customer Support</td><td>Instant answers from helpdesk articles</td><td>Zendesk Answer Bot, Intercom Fin</td></tr>
+                    <tr><td>Healthcare</td><td>Clinical guideline Q&A</td><td>UpToDate RAG assistant</td></tr>
+                    <tr><td>Legal Tech</td><td>Contract analysis and clause retrieval</td><td>Lawyer chatbots (Harvey AI)</td></tr>
+                    <tr><td>Finance</td><td>SEC filings, earnings call Q&A</td><td>Morgan Stanley wealth management assistant</td></tr>
+                    <tr><td>Education</td><td>Textbook question answering</td><td>Khan Academy Khanmigo</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Best Practices & Pitfalls -->
+        <div class="card">
+            <h2>✅ RAG Best Practices & Common Pitfalls</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">👍 Best Practices</div>
+                    <ul>
+                        <li>Use overlapping chunks (preserve context).</li>
+                        <li>Include metadata (source, date) in retrieval.</li>
+                        <li>Set temperature low (0-0.3) for factual answers.</li>
+                        <li>Implement fallback: if low similarity score → say "I don't know".</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="subhead">⚠️ Common Pitfalls</div>
+                    <ul>
+                        <li>Chunks too small → missing context.</li>
+                        <li>Outdated embeddings → poor retrieval.</li>
+                        <li>No reranking → top results irrelevant.</li>
+                        <li>Ignoring token limits → truncation of context.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="insight-box">
+                🧪 <strong>Debugging tip:</strong> Always inspect retrieved chunks before sending to LLM. Use "trace" logging in LangChain to see what context was used.
+            </div>
+        </div>
+
+        <!-- Hands-on Challenge & Next Steps -->
+        <div style="background: #ecfdf5; border-radius: 1.2rem; padding: 1.3rem 1.5rem; border-left: 6px solid #f97316; margin-top: 0.8rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🎯 Day 13 Core Takeaways — Building a RAG App:</p>
+            <p>✔ <strong>What:</strong> RAG = Retrieval + Generation. Combines vector search with LLMs for grounded answers.<br>
+            ✔ <strong>Why:</strong> Overcomes LLM knowledge cutoff, reduces hallucinations, enables domain-specific Q&A.<br>
+            ✔ <strong>How:</strong> Chunk documents → Embed → Store in vector DB → Retrieve top-k → Inject into LLM prompt → Generate.<br>
+            ✔ <strong>Where:</strong> Customer support, internal knowledge bots, research assistants, legal/medical Q&A.<br>
+            ✔ <strong>Next steps:</strong> Implement with LangChain, experiment with chunk sizes, evaluate with RAGAS. Deploy with Streamlit or Slack bot.</p>
+        </div>
+    </div>
+    <footer>
+        🔍 RAG is the production-ready pattern for LLMs — build grounded, trustworthy AI systems that access your data. Start building today!
+    </footer>
+</div>
+</body>
+</html>
