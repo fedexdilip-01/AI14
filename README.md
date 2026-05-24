@@ -13,4 +13,4 @@
 <h2>11‑Day -NLP Basics: Bag-of-Words & Word Embeddings </h2> https://fedexdilip-01.github.io/AI14/Day11.html
 <h2>12‑Day -LLMs & Prompt Engineering: GPT, Claude, Llama </h2> https://fedexdilip-01.github.io/AI14/Day12.html
 <h2>13‑Day -Build a Simple RAG App: Retrieval-Augmented Generation </h2> https://fedexdilip-01.github.io/AI14/Day13.html
-<h2>14‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day14.html
+<h2>14‑Day - AI Ethics, Bias Mitigation & Final Mini-Project </h2> https://fedexdilip-01.github.io/AI14/Day14.html
