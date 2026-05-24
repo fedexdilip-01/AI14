@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Ethics, Bias Mitigation & Final Mini-Project | Responsible ML</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #fef9f1 0%, #f0e7db 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #2c1a0e;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(115deg, #3b2a1f 0%, #6b4e3a 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 880px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #d97706;
+            color: white;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #e5d9cf;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #6b4e3a, #d97706);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #d97706;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #b45309;
+            font-size: 1.05rem;
+            margin: 1rem 0 0.3rem 0;
+        }
+
+        .insight-box {
+            background: #fffaf0;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .example-box {
+            background: #fef9f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            border: 1px solid #ffe2bf;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0b0f19;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', 'SF Mono', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .ethics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .ethics-table th, .ethics-table td {
+            border: 1px solid #d6c5b0;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .ethics-table th {
+            background: #f4e9de;
+            font-weight: 700;
+        }
+
+        .highlight {
+            background: #fde68a;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #7b341e;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #d6c5b0, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fefcf9;
+            color: #6b4e3a;
+        }
+
+        .project-flow {
+            background: #ecfdf5;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 760px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .code-block {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🤝 AI Ethics, Bias Mitigation & Final Mini-Project</h1>
+        <p>Build responsible AI: understand ethical challenges, detect and reduce bias, and showcase your skills in a capstone mini-project.</p>
+        <div class="badge">Day 14 — Responsible AI | Fairness | End-to-End Project</div>
+    </div>
+    <div class="content">
+
+        <!-- What & Why AI Ethics -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📌 What is AI Ethics & Why It Matters?</h2>
+                <div class="subhead">✦ The moral compass of ML</div>
+                <p>AI Ethics examines the societal impact of AI systems: fairness, accountability, transparency, privacy, and safety. It ensures technology benefits humanity without causing harm or discrimination.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why crucial now?</strong> — AI systems influence hiring, loans, healthcare, criminal justice. Biased models amplify historical inequalities. Ethical AI is not optional — it's a necessity.
+                </div>
+                <div class="example-box">
+                    <strong>💡 Real scandal:</strong> Healthcare algorithm underpredicted risk for Black patients by 50% (2020). Hiring tools penalized women for resume gaps. Facial recognition had higher error rates for minorities.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚖️ Types of Bias in ML</h2>
+                <div class="subhead">✦ Where bias creeps in</div>
+                <ul style="margin-left: 1.2rem;">
+                    <li><span class="highlight">Historical Bias:</span> Past societal biases reflected in training data.</li>
+                    <li><span class="highlight">Representation Bias:</span> Certain groups underrepresented.</li>
+                    <li><span class="highlight">Measurement Bias:</span> Features/labels measure differently across groups.</li>
+                    <li><span class="highlight">Algorithmic Bias:</span> Model design choices exacerbate disparities.</li>
+                </ul>
+                <div class="code-block">
+# Example: Disparate impact in loan approval
+# Model approved 80% of majority group vs 40% of minority group
+# Ratio = 0.4/0.8 = 0.5 → violates fairness standards (<0.8 threshold)
+                </div>
+            </div>
+        </div>
+
+        <!-- Bias Mitigation Techniques -->
+        <div class="card">
+            <h2>🛡️ Bias Mitigation: What/Why/How/Where</h2>
+            <table class="ethics-table">
+                <thead>
+                    <tr><th>Stage</th><th>Technique</th><th>Why</th><th>How (Implementation)</th><th>Where Applicable</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Pre-processing</strong></td><td>Reweighing, data augmentation</td><td>Fix bias before training</td><td>Re-sample underrepresented groups, generate synthetic data</td><td>Credit scoring, hiring datasets</td></tr>
+                    <tr><td><strong>In-processing</strong></td><td>Fairness constraints, adversarial debiasing</td><td>Incorporate fairness during training</td><td>Add regularization term penalizing disparate impact</td><td>Any classification model (TF, PyTorch)</td></tr>
+                    <tr><td><strong>Post-processing</strong></td><td>Threshold adjustment, reject option</td><td>Adjust outputs after training</td><td>Calibrate decision thresholds per group</td><td>Legacy models, quick fixes</td></tr>
+                </tbody>
+            </table>
+            <div class="code-block">
+# Using AIF360 (IBM) for bias mitigation
+from aif360.algorithms.preprocessing import Reweighing
+rw = Reweighing(unprivileged_groups, privileged_groups)
+train_dataset_rw = rw.fit_transform(train_dataset)
+# Then train model on reweighed dataset
+            </div>
+            <div class="insight-box">
+                🧠 <strong>Key fairness metrics:</strong> Demographic parity, Equalized odds, Individual fairness. Choose based on use case (e.g., equal opportunity for healthcare).
+            </div>
+        </div>
+
+        <!-- Evaluation of Fairness -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📊 How to Detect & Measure Bias?</h2>
+                <div class="subhead">✦ Quantitative fairness metrics</div>
+                <ul>
+                    <li><span class="highlight">Demographic Parity:</span> Proportion of positive outcomes equal across groups.</li>
+                    <li><span class="highlight">Equalized Odds:</span> Equal TPR and FPR across groups.</li>
+                    <li><span class="highlight">Disparate Impact:</span> Ratio of positive outcome rates (should be >0.8).</li>
+                </ul>
+                <div class="code-block">
+from fairlearn.metrics import demographic_parity_difference
+dp_diff = demographic_parity_difference(y_true, y_pred, sensitive_features=gender)
+# dp_diff close to 0 → fair
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🧪 Case Study: Fairness in Credit Scoring</h2>
+                <p><strong>Problem:</strong> Loan approval model using historical data rejected minority applicants at higher rate due to past redlining.</p>
+                <div class="subhead">✅ Solutions applied</div>
+                <ul>
+                    <li>Removed protected attributes (race) but still proxy bias.</li>
+                    <li>Applied reweighing to balance representation.</li>
+                    <li>Added equalized odds constraint during training.</li>
+                </ul>
+                <div class="insight-box">
+                    📈 <strong>Result:</strong> Reduced disparate impact from 0.65 → 0.92 while maintaining 90% original accuracy.
+                </div>
+            </div>
+        </div>
+
+        <!-- Transparency & Explainability -->
+        <div class="card">
+            <h2>🔍 Explainable AI (XAI) — Why & How?</h2>
+            <p><strong>Why:</strong> Black-box models (deep learning) hide decision logic. Regulations (GDPR, EU AI Act) require 'right to explanation'.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">SHAP (SHapley Additive Explanations)</div>
+                    <div class="code-block">
+import shap
+explainer = shap.Explainer(model, X_train)
+shap_values = explainer(X_test)
+shap.summary_plot(shap_values, X_test)
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">LIME (Local Interpretable Model-agnostic Explanations)</div>
+                    <div class="code-block">
+from lime.lime_tabular import LimeTabularExplainer
+explainer = LimeTabularExplainer(X_train, ...)
+exp = explainer.explain_instance(X_test[0], model.predict_proba)
+exp.show_in_notebook()
+                    </div>
+                </div>
+            </div>
+            <div class="example-box">
+                📌 <strong>Where used:</strong> Loan denial explanations, medical diagnosis justification, autonomous vehicle decision logging.
+            </div>
+        </div>
+
+        <!-- Final Mini-Project Section -->
+        <div class="card">
+            <h2>🎓 FINAL MINI-PROJECT: End-to-End ML with Ethical Check</h2>
+            <div class="project-flow">
+                <p><strong>🎯 Objective:</strong> Build a complete ML pipeline (data prep → model training → evaluation) and explicitly assess fairness & bias. Showcase your 14-day learning journey.</p>
+                <div class="subhead">📋 Project Options:</div>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li><strong>A) Credit Risk Assessment:</strong> Predict loan default, audit for racial/gender bias, mitigate using reweighing.</li>
+                    <li><strong>B) Healthcare Triage:</strong> Predict patient readmission, ensure equal performance across age/income groups.</li>
+                    <li><strong>C) Custom Dataset:</strong> Choose any binary classification + sensitive attribute (e.g., UCI Adult, COMPAS).</li>
+                </ul>
+            </div>
+            <div class="subhead">🔧 Step-by-Step Deliverables</div>
+            <div class="code-block">
+# Mini-Project Structure (Python + Jupyter/Colab)
+
+## 1. Data Exploration & Preprocessing
+- Load dataset, identify sensitive attributes (race, gender, age)
+- Visualize target distribution across groups
+
+## 2. Base Model (Unmitigated)
+- Train RandomForest/LogisticRegression
+- Compute fairness metrics (demographic parity, equalized odds)
+
+## 3. Bias Mitigation
+- Apply Reweighing or ExponentiatedGradient (Fairlearn)
+- Train new model on mitigated data
+
+## 4. Evaluation & Comparison
+- Accuracy, Precision, Recall, F1 (both models)
+- Fairness metrics before/after
+- SHAP explanations for predictions
+
+## 5. Ethical Report (1 page)
+- Identify sources of potential bias
+- Limitations and deployment recommendations
+- User-facing explanation strategy
+            </div>
+            <div class="insight-box">
+                🚀 <strong>Where to host:</strong> GitHub repo + Colab notebook. Include README with ethical impact statement — great portfolio piece!
+            </div>
+        </div>
+
+        <!-- Example Code Snippet for Mini-Project -->
+        <div class="card">
+            <h2>📝 Mini-Project Code Skeleton (Using Fairlearn + SHAP)</h2>
+            <div class="code-block">
+# pip install fairlearn shap pandas sklearn
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from fairlearn.metrics import demographic_parity_difference
+from fairlearn.postprocessing import ThresholdOptimizer
+from shap import Explainer
+
+# Load dataset (e.g., UCI Adult Income)
+data = pd.read_csv("adult.csv")
+X = data.drop('income', axis=1)
+y = (data['income'] == '>50K').astype(int)
+sensitive = X['gender']   # privileged: Male, unprivileged: Female
+
+# Split
+X_train, X_test, y_train, y_test, sens_train, sens_test = train_test_split(
+    X, y, sensitive, test_size=0.2, random_state=42
+)
+
+# Train base model
+model = RandomForestClassifier(n_estimators=50, random_state=42)
+model.fit(X_train, y_train)
+y_pred_base = model.predict(X_test)
+
+# Fairness metrics before mitigation
+dp_diff_base = demographic_parity_difference(y_test, y_pred_base, sensitive_features=sens_test)
+print(f"Demographic parity difference (base): {dp_diff_base:.3f}")
+
+# Apply post-processing mitigation
+mitigator = ThresholdOptimizer(
+    estimator=model,
+    constraints="demographic_parity",
+    prefit=True
+)
+mitigator.fit(X_train, y_train, sensitive_features=sens_train)
+y_pred_mitigated = mitigator.predict(X_test, sensitive_features=sens_test)
+
+dp_diff_mit = demographic_parity_difference(y_test, y_pred_mitigated, sensitive_features=sens_test)
+print(f"Demographic parity difference (mitigated): {dp_diff_mit:.3f}")
+
+# Explainability
+explainer = Explainer(model, X_train)
+shap_values = explainer(X_test)
+shap.summary_plot(shap_values, X_test, feature_names=X.columns)
+            </div>
+            <div class="example-box">
+                📊 <strong>Expected output:</strong> Mitigated model shows lower demographic parity difference (closer to 0) while maintaining reasonable accuracy. SHAP reveals which features drive predictions.
+            </div>
+        </div>
+
+        <!-- Where Ethics Applied in Industry -->
+        <div class="card">
+            <h2>🌍 Where Ethical AI is Implemented Today</h2>
+            <table class="ethics-table">
+                <thead>
+                    <tr><th>Sector</th><th>Regulation / Framework</th><th>Practical Measures</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Finance</strong></td><td>ECOA, Fair Lending laws</td><td>Regular disparate impact audits, model explainability</td></tr>
+                    <tr><td><strong>Healthcare</strong></td><td>FDA guidelines for AI/ML</td><td>Equality of performance across subgroups, clinical validation</td></tr>
+                    <tr><td><strong>HR/Tech</strong></td><td>NYC AI bias law, EU AI Act</td><td>Bias audits for hiring tools, transparency reports</td></tr>
+                    <tr><td><strong>Criminal Justice</strong></td><td>COMPAS controversy</td><td>Ban on unvalidated risk assessments in some states</td></tr>
+                </tbody>
+            </table>
+            <div class="insight-box">
+                📌 <strong>Your role as ML engineer:</strong> Always ask "Who might be harmed?" Document limitations. Advocate for fairness testing in your team's MLOps pipeline.
+            </div>
+        </div>
+
+        <!-- Final Takeaways -->
+        <div style="background: #f4e9de; border-radius: 1.2rem; padding: 1.3rem 1.5rem; border-left: 6px solid #d97706; margin-top: 0.8rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🎯 Day 14 Core Takeaways — Ethics, Bias & Final Project:</p>
+            <p>✔ <strong>What:</strong> AI Ethics ensures fairness, accountability, transparency. Bias can enter at any stage (data → model → deployment).<br>
+            ✔ <strong>Why:</strong> Unchecked AI causes real harm: discrimination, lost opportunities, legal liability. Ethical AI builds trust.<br>
+            ✔ <strong>How:</strong> Use fairness metrics (demographic parity, equalized odds), mitigation techniques (reweighing, threshold optimization), and explainability (SHAP, LIME).<br>
+            ✔ <strong>Where:</strong> Every sector — finance, healthcare, HR, criminal justice. Regulations are emerging globally.<br>
+            ✔ <strong>Final Mini-Project:</strong> Build an end-to-end ML model + fairness audit + mitigation + explanation. Showcase your responsible AI skills!<br>
+            ✔ <strong>Next steps:</strong> Contribute to open-source fairness toolkits (Fairlearn, AIF360), follow AI ethics research, and always prioritize human well-being over pure performance.</p>
+        </div>
+    </div>
+    <footer>
+        🌟 Responsible AI is not a constraint — it's a design principle. Complete your 14-day journey by building an ethical, impactful model. The world needs ethical engineers — that's you.
+    </footer>
+</div>
+</body>
+</html>
