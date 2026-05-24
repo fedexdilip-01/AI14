@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CNNs for Image Tasks: MNIST & CIFAR-10 | Deep Learning Vision</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f3f6fa 0%, #e2e8f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #0f172a;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(115deg, #0c4a6e 0%, #1e3a8a 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 850px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #f97316;
+            color: white;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #eef2f6;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #1e3a8a, #f97316);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #f97316;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #1e40af;
+            font-size: 1.05rem;
+            margin: 1rem 0 0.3rem 0;
+        }
+
+        .insight-box {
+            background: #eff6ff;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .example-box {
+            background: #fef9f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            border: 1px solid #ffe2bf;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0b0f19;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', 'SF Mono', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .compare-table th, .compare-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background: #eef2ff;
+            font-weight: 700;
+        }
+
+        .highlight {
+            background: #fed7aa;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #9a3412;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbd5e1, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fcfdfe;
+            color: #1e3a8a;
+        }
+
+        .vision-icon {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .code-block {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🖼️ Convolutional Neural Networks (CNNs) for Image Tasks</h1>
+        <p>Mastering visual recognition: From MNIST digits to CIFAR-10 object classification — build, train, and understand CNNs.</p>
+        <div class="badge">Day 10 — Computer Vision with Deep Learning</div>
+    </div>
+    <div class="content">
+
+        <!-- Intro: What & Why CNNs -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📌 What are CNNs & Why for Images?</h2>
+                <div class="subhead">✦ What is a CNN?</div>
+                <p>Convolutional Neural Networks are specialized architectures for grid-like data (images, sequences). They use <strong>convolutional layers</strong> to automatically learn spatial hierarchies of features: edges → textures → objects.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why CNNs over dense networks?</strong> — Parameter sharing & translation invariance. A standard dense layer would blow up with images (e.g., 32x32x3 = 3072 inputs → huge weights). CNNs use filters sliding across the image, drastically reducing parameters and generalizing better.
+                </div>
+                <div class="example-box">
+                    <strong>💡 Example:</strong> For CIFAR-10 (32x32 color images), a CNN with Conv2D + pooling learns to detect edges in early layers, shapes in middle layers, and complex objects (cars, birds) in deeper layers.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚙️ Core Building Blocks</h2>
+                <div class="subhead">🧩 Key layers</div>
+                <ul style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                    <li><span class="highlight">Conv2D:</span> Applies learnable filters (kernels) to extract features.</li>
+                    <li><span class="highlight">Activation (ReLU):</span> Introduces non-linearity.</li>
+                    <li><span class="highlight">MaxPooling2D:</span> Down-samples, reduces spatial dimensions, adds translation invariance.</li>
+                    <li><span class="highlight">Flatten + Dense:</span> Final classification layers.</li>
+                </ul>
+                <div class="insight-box">
+                    ✅ <strong>How it works:</strong> Filter slides across image → element-wise multiplication + sum → feature map. Multiple filters create depth. Stacking layers builds hierarchy.
+                </div>
+                <div class="code-block">
+# Simple CNN architecture pattern
+Conv2D(filters=32, kernel_size=3, activation='relu')
+MaxPooling2D(pool_size=2)
+Conv2D(filters=64, kernel_size=3, activation='relu')
+MaxPooling2D(pool_size=2)
+Flatten()
+Dense(128, activation='relu')
+Dense(num_classes, activation='softmax')
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Example 1: MNIST with TensorFlow -->
+        <div class="card">
+            <h2>🐍 Practical CNN #1: MNIST Digit Classification (TensorFlow/Keras)</h2>
+            <div class="subhead">✦ Step-by-step — from grayscale 28x28 digits to 99% accuracy</div>
+            <div class="code-block">
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Load & preprocess MNIST
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+x_train = x_train.reshape(-1, 28, 28, 1) / 255.0   # add channel dimension
+x_test = x_test.reshape(-1, 28, 28, 1) / 255.0
+
+# Build CNN model
+model = models.Sequential([
+    layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64, (3,3), activation='relu'),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64, (3,3), activation='relu'),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+model.summary()
+history = model.fit(x_train, y_train, epochs=5, batch_size=64, validation_split=0.1)
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f"MNIST Test Accuracy: {test_acc:.4f}")  # > 99% after 5 epochs
+            </div>
+            <div class="insight-box">
+                📊 <strong>MNIST outcome:</strong> Simple CNN achieves 99.2%+ accuracy. Showcases power of convolutions for basic shape recognition.
+            </div>
+        </div>
+
+        <!-- Complete Example 2: CIFAR-10 (more complex) -->
+        <div class="card">
+            <h2>🐍 Practical CNN #2: CIFAR-10 Object Classification (PyTorch)</h2>
+            <div class="subhead">✦ 32x32 color images — 10 classes: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck</div>
+            <div class="code-block">
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision
+import torchvision.transforms as transforms
+
+# Data augmentation & normalization
+transform = transforms.Compose([
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomCrop(32, padding=4),
+    transforms.ToTensor(),
+    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+])
+
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True)
+testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False)
+
+# Define CNN architecture
+class CIFAR10CNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 32, 3, padding=1)
+        self.conv2 = nn.Conv2d(32, 64, 3, padding=1)
+        self.conv3 = nn.Conv2d(64, 128, 3, padding=1)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.fc1 = nn.Linear(128 * 4 * 4, 256)
+        self.fc2 = nn.Linear(256, 10)
+        self.dropout = nn.Dropout(0.5)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.pool(self.relu(self.conv1(x)))
+        x = self.pool(self.relu(self.conv2(x)))
+        x = self.pool(self.relu(self.conv3(x)))
+        x = x.view(-1, 128 * 4 * 4)
+        x = self.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = self.fc2(x)
+        return x
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = CIFAR10CNN().to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop (3-5 epochs for demo)
+for epoch in range(5):
+    running_loss = 0.0
+    for images, labels in trainloader:
+        images, labels = images.to(device), labels.to(device)
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+    print(f"Epoch {epoch+1}, Loss: {running_loss/len(trainloader):.3f}")
+
+# Evaluation
+correct = 0
+total = 0
+model.eval()
+with torch.no_grad():
+    for images, labels in testloader:
+        images, labels = images.to(device), labels.to(device)
+        outputs = model(images)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+print(f"CIFAR-10 Test Accuracy: {100 * correct / total:.2f}%")  # ~75-80% for basic CNN
+            </div>
+            <div class="insight-box">
+                🎯 <strong>Why CIFAR-10 harder:</strong> Color, cluttered backgrounds, intra-class variation (e.g., different cat breeds). CNNs with augmentation achieve ~80-85%. More depth (ResNet) pushes 90%+.
+            </div>
+        </div>
+
+        <!-- What/Why/How/Where table -->
+        <div class="card">
+            <h2>📋 Complete Reference: CNNs for Image Tasks</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Concept</th><th>What</th><th>Why</th><th>How (implementation)</th><th>Where (real-world)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Convolution Layer</strong></td><td>Learns feature maps via sliding filters.</td>:<td>Spatial hierarchy, weight sharing, translation invariance.</td><td>tf.keras.layers.Conv2D, torch.nn.Conv2d</td><td>Medical imaging (X-ray), facial recognition.</td></tr>
+                    <tr><td><strong>Pooling (Max/Avg)</strong></td><td>Down-samples spatial dimensions.</td>:<td>Reduces parameters, controls overfitting, provides small translation invariance.</td><td>MaxPooling2D, AveragePooling2D</td><td>Reducing resolution while keeping dominant features.</td></tr>
+                    <tr><td><strong>MNIST CNN</strong></td>:<td>LeNet-style architecture for digits.</td><td>Fast experimentation, baseline for handwriting recognition.</td><td>2-3 Conv layers + dense → 99% accuracy.</td><td>Digit recognition in postal mail, bank checks.</td></tr>
+                    <tr><td><strong>CIFAR-10 CNN</strong></td>:<td>Deeper conv layers, dropout, augmentation.</td><td>Realistic object classification benchmark.</td><td>Data augmentation (flip, crop), batch norm optional.</td><td>Self-driving car object detection, product categorization.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Advanced concepts: Transfer Learning & Where industry uses -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>🚀 Beyond Basics: Data Augmentation & Dropout</h2>
+                <div class="subhead">✨ Why CNNs need regularization</div>
+                <p>Image datasets can overfit. <span class="highlight">Data augmentation</span> (rotation, zoom, flip) creates varied training samples. <span class="highlight">Dropout</span> randomly disables neurons during training.</p>
+                <div class="code-block">
+# Keras data augmentation
+data_augmentation = tf.keras.Sequential([
+    layers.RandomFlip("horizontal"),
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.1),
+])
+                </div>
+                <div class="example-box">
+                    📈 <strong>Result:</strong> Augmentation improves CIFAR-10 accuracy by 5-8%, reducing overfitting significantly.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🌍 Where CNNs Power Real AI Systems</h2>
+                <ul style="margin-left: 1.2rem;">
+                    <li><strong>Medical Diagnosis:</strong> Chest X-ray classification (pneumonia detection).</li>
+                    <li><strong>Autonomous Vehicles:</strong> Pedestrian detection, lane marking, traffic sign recognition.</li>
+                    <li><strong>Retail:</strong> Product recognition in warehouses, visual search.</li>
+                    <li><strong>Agriculture:</strong> Crop disease detection from drone images.</li>
+                    <li><strong>Security:</strong> Face recognition, surveillance anomaly detection.</li>
+                </ul>
+                <div class="insight-box">
+                    💡 <strong>How to adapt:</strong> Transfer learning from pre-trained CNNs (VGG, ResNet, EfficientNet) on ImageNet — fine-tune on your small dataset for state-of-the-art results.
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison: MNIST vs CIFAR-10 challenges -->
+        <div class="card">
+            <h2>📊 MNIST vs CIFAR-10: Why different CNN complexities?</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Aspect</th><th>MNIST</th><th>CIFAR-10</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Image size & channels</td><td>28x28 grayscale (1 channel)</td><td>32x32 RGB (3 channels)</td></tr>
+                    <tr><td>Number of classes</td><td>10 digits</td><td>10 objects (varied shapes/colors)</td></tr>
+                    <tr><td>Baseline CNN accuracy</td><td>>99%</td><td>~75-85% (simple CNN)</td></tr>
+                    <tr><td>Required depth</td><td>Shallow (2-3 conv layers)</td><td>Deeper + augmentation + batch norm</td></tr>
+                    <tr> .=Typical overfitting risk</td><td>Low (simple task)</td><td>Moderate to high (color & texture)</td></tr>
+                </tbody>
+            </table>
+            <div class="example-box">
+                🔬 <strong>Pro tip:</strong> Always start with a simple CNN like LeNet-5 for MNIST or VGG-style for CIFAR. Use batch normalization to stabilize training.
+            </div>
+        </div>
+
+        <!-- Visual intuition: What CNNs learn -->
+        <div class="card">
+            <h2>🧠 Intuition: Feature Hierarchy in CNNs</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">Early layers</div>
+                    <p>Detect edges, corners, simple gradients → Gabor filters, color blobs.</p>
+                    <div class="subhead">Middle layers</div>
+                    <p>Combine edges into textures, patterns, simple shapes (wheels, eyes).</p>
+                    <div class="subhead">Deep layers</div>
+                    <p>High-level object parts (faces, car windshields) and full object detectors.</p>
+                </div>
+                <div class="vision-icon">
+                    🖼️ CNN feature visualization:<br>
+                    [Edge] → [Texture] → [Part] → [Object]
+                </div>
+            </div>
+            <div class="insight-box">
+                ✅ <strong>Why this matters:</strong> Understanding hierarchies helps design better architectures — deeper for complex tasks, skip connections to preserve gradients.
+            </div>
+        </div>
+
+        <!-- Final code challenge / next steps -->
+        <div style="background: #ecfdf5; border-radius: 1.2rem; padding: 1.3rem 1.5rem; border-left: 6px solid #f97316; margin-top: 0.8rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🎯 Day 10 Core Takeaways — CNNs for Images:</p>
+            <p>✔ <strong>What:</strong> Convolutional Neural Networks leverage spatial hierarchies with filters and pooling.<br>
+            ✔ <strong>Why:</strong> Parameter efficiency, translation invariance, state-of-the-art for vision tasks.<br>
+            ✔ <strong>How:</strong> Conv2D → ReLU → Pooling → Dense layers. Frameworks like TF/PyTorch simplify implementation.<br>
+            ✔ <strong>Where:</strong> MNIST (digit recognition), CIFAR-10 (object classification), medical imaging, autonomous driving.<br>
+            ✔ Next steps: Experiment with deeper architectures (ResNet), transfer learning, and real-time inference with GPU.</p>
+        </div>
+    </div>
+    <footer>
+        🖼️ Mastering CNNs unlocks computer vision superpowers — from handwritten digits to real-world scene understanding. Build, train, and innovate!
+    </footer>
+</div>
+</body>
+</html>
