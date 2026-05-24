@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Classification Mastery: Logistic Regression & k-NN | ML Day 5</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #0f172a;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 2rem;
+            box-shadow: 0 25px 40px -14px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            backdrop-filter: blur(0px);
+        }
+
+        .hero {
+            background: linear-gradient(115deg, #1e293b 0%, #2d4a6e 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 780px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #f97316;
+            color: #1e293b;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 1px solid #e9eef3;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #2c5f8a, #e06c2e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            border-left: 5px solid #e06c2e;
+            padding-left: 0.9rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #2c5f8a;
+            margin: 1rem 0 0.3rem 0;
+            font-size: 1.05rem;
+        }
+
+        .insight-box {
+            background: #f8fafc;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #f97316;
+        }
+
+        .example-block {
+            background: #fff7ed;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+            border: 1px solid #ffddb0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-snip {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 0.8rem 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .comparison-table th {
+            background: #eef2ff;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .highlight {
+            background: #fed7aa;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #9a3412;
+        }
+
+        .flow-diagram {
+            background: #ffffffea;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #d6e2ef;
+            margin: 1rem 0;
+        }
+
+        .flex-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .step {
+            background: #334155;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbd5e1, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fefefe;
+            color: #334155;
+        }
+
+        @media (max-width: 680px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📌 Classification Mastery: Logistic Regression & k-NN</h1>
+        <p>Learn the core of supervised classification — probability-based decision boundaries and similarity-driven neighbors. <br> <strong>What, Why, How, Where</strong> with real-world examples.</p>
+        <div class="badge">Day 5 — Logistic Regression · k-Nearest Neighbors (k-NN)</div>
+    </div>
+    <div class="content">
+
+        <!-- Two main columns: Logistic Regression & k-NN intro -->
+        <div class="grid-2col">
+            <!-- Logistic Regression Card -->
+            <div class="card">
+                <h2>📉 Logistic Regression</h2>
+                <div class="subhead">✦ What is it?</div>
+                <p>Despite its name, logistic regression is a <strong>classification algorithm</strong> used to predict the probability of a binary (or multi-class) outcome. It applies the <strong>sigmoid function</strong> to map linear outputs to [0,1] probability space.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why logistic regression?</strong> — Simple, fast, interpretable, gives well-calibrated probabilities. Works great when decision boundary is roughly linear.
+                </div>
+                <div class="example-block">
+                    <strong>💡 Classic example: Email spam detection</strong><br>
+                    Features: word frequencies, sender info → Model outputs P(Spam). If P ≥ 0.5 → "Spam" else "Not Spam".<br>
+                    Decision boundary: linear in log-odds space.
+                </div>
+                <div class="code-snip">
+                    from sklearn.linear_model import LogisticRegression<br>
+                    model = LogisticRegression()<br>
+                    model.fit(X_train, y_train)<br>
+                    proba = model.predict_proba(X_test)[:,1]  # probability of class 1
+                </div>
+                <p><strong>📌 Where used?</strong> — Medical diagnosis (disease vs healthy), credit default prediction, churn modeling, ad click prediction.</p>
+            </div>
+
+            <!-- k-NN Card -->
+            <div class="card">
+                <h2>👥 k-Nearest Neighbors (k-NN)</h2>
+                <div class="subhead">✦ What is it?</div>
+                <p>k-NN is a <strong>non-parametric, lazy learning algorithm</strong> that classifies a new point based on the majority vote (or average) of its k nearest neighbors in the feature space. Distance metrics: Euclidean, Manhattan, etc.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why k-NN?</strong> — No training phase, intuitive, adapts to complex decision boundaries, works well with small datasets.
+                </div>
+                <div class="example-block">
+                    <strong>💡 Example: Handwritten digit recognition</strong><br>
+                    Given an image of a digit (8x8 pixels), find k most similar images from training set. Majority label decides digit (0-9).<br>
+                    k=3 → neighbors: [5,5,6] → predicts 5.
+                </div>
+                <div class="code-snip">
+                    from sklearn.neighbors import KNeighborsClassifier<br>
+                    knn = KNeighborsClassifier(n_neighbors=5)<br>
+                    knn.fit(X_train, y_train)   # just stores data<br>
+                    predictions = knn.predict(X_test)
+                </div>
+                <p><strong>📌 Where used?</strong> — Recommendation systems, anomaly detection, image classification (small scale), medical pattern recognition.</p>
+            </div>
+        </div>
+
+        <!-- Deep-dive: How they work + comparison -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h2>⚙️ How They Work: Intuition & Mechanics</h2>
+            <div class="grid-2col" style="gap: 1.5rem;">
+                <div>
+                    <div class="subhead">🧠 Logistic Regression — Decision Boundary</div>
+                    <p>Logistic regression calculates <strong>log-odds = w·x + b</strong> and applies sigmoid: σ(z) = 1/(1+e⁻ᶻ). The model finds coefficients using <strong>maximum likelihood estimation</strong> (gradient descent). Output is a smooth probability curve.</p>
+                    <div class="code-snip" style="font-size: 0.75rem;">
+                        Sigmoid(z) = 1 / (1 + exp(-z))<br>
+                        Log-odds = ln(P/(1-P)) = β₀ + β₁x₁ + ... + βₙxₙ
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">📏 k-NN — Distance-based Classification</div>
+                    <p>For a new sample, compute distance to every stored training point. Select k closest, then apply majority voting (classification) or average (regression). Requires <strong>feature scaling</strong> (otherwise attributes with larger magnitude dominate).</p>
+                    <div class="code-snip" style="font-size: 0.75rem;">
+                        Euclidean distance: d(p,q) = √ Σ (qᵢ - pᵢ)²<br>
+                        Decision boundary formed implicitly by Voronoi tessellation.
+                    </div>
+                </div>
+            </div>
+            <div class="insight-box" style="background: #eef2ff;">
+                🔍 <strong>Key difference:</strong> Logistic Regression learns a parametric decision boundary (probabilistic) and is fast at inference. k-NN is memory-based, no training, but slower for large datasets & requires careful k selection.
+            </div>
+        </div>
+
+        <!-- DETAILED what/why/how/where table for both -->
+        <div class="grid-2col">
+            <div class="card">
+                <h2>📋 Logistic Regression: What/Why/How/Where</h2>
+                <table class="comparison-table">
+                    <tr><th>Aspect</th><th>Details</th></tr>
+                    <tr><td><strong>What</strong></td><td>Statistical model for binary/multiclass classification that outputs probabilities using sigmoid/softmax.</td></tr>
+                    <tr><td><strong>Why</strong></td><td>Interpretable coefficients (feature importance), probabilistic output, efficient training, less prone to overfitting with regularization.</td></tr>
+                    <tr><td><strong>How</strong></td><td>Optimize log-loss (cross-entropy) via gradient descent / Newton methods. Regularization (L1/L2) can be added.</td></tr>
+                    <tr><td><strong>Where</strong></td><td>Banking (loan default), healthcare (diabetes prediction), HR (employee attrition), NLP sentiment polarity.</td></tr>
+                </table>
+                <div class="example-block" style="margin-top: 0.4rem;">
+                    🏥 <strong>Real‑world case:</strong> Predicting patient readmission risk within 30 days. Features: age, previous visits, medications. Logistic regression gives probability of readmission → trigger preventive care.
+                </div>
+            </div>
+            <div class="card">
+                <h2>📋 k-NN: What/Why/How/Where</h2>
+                <table class="comparison-table">
+                    <tr><th>Aspect</th><th>Details</th></tr>
+                    <tr><td><strong>What</strong></td><td>Instance-based, lazy learner; classifies based on majority class of k nearest neighbors.</td></tr>
+                    <tr><td><strong>Why</strong></td><td>Simple to implement, no assumptions about data distribution, naturally handles multi-class, nonlinear.</td></tr>
+                    <tr><td><strong>How</strong></td><td>Choose k (hyperparameter), distance metric (Euclidean, Manhattan), store all training data. Inference = O(N).</td></tr>
+                    <tr><td><strong>Where</strong></td><td>Recommender engines (user-based CF), gene expression classification, computer vision (small datasets), missing data imputation.</td></tr>
+                </table>
+                <div class="example-block" style="margin-top: 0.4rem;">
+                    🎬 <strong>Movie recommendation:</strong> Find k users with most similar taste (ratings) → recommend movies the active user hasn’t seen but neighbors liked.
+                </div>
+            </div>
+        </div>
+
+        <!-- Full real case study: Credit Card Fraud Detection -->
+        <div class="card">
+            <h2>🔎 Complete Case Study: Credit Card Fraud Detection (Logistic Regression vs k-NN)</h2>
+            <p><strong>Problem:</strong> Identify fraudulent transactions from legitimate ones. Highly imbalanced dataset (fraud ≈ 0.1%).</p>
+            <div class="grid-2col" style="gap: 1.2rem;">
+                <div>
+                    <div class="subhead">📌 Logistic Regression approach</div>
+                    <ul style="margin-left: 1.2rem;">
+                        <li>Features: transaction amount, time, merchant category, user location.</li>
+                        <li>Outputs probability of fraud. Use threshold tuning (precision/recall).</li>
+                        <li>Interpretability: coefficients show risky attributes (e.g., high amount + unusual location).</li>
+                        <li>Scales well to millions of rows with SGD.</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="subhead">🔍 k-NN approach</div>
+                    <ul style="margin-left: 1.2rem;">
+                        <li>Define similarity based on transaction features (scaled).</li>
+                        <li>Classify new transaction by checking k nearest past transactions.</li>
+                        <li>Works well if frauds appear in clusters.</li>
+                        <li>Challenges: high-dimensional, need optimized distance + k selection.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-snip">
+                # Logistic Regression for fraud (balanced class weight)<br>
+                lr = LogisticRegression(class_weight='balanced', C=0.1)<br>
+                lr.fit(X_train, y_train)<br>
+                y_pred_proba = lr.predict_proba(X_test)[:,1]<br>
+                # k-NN baseline<br>
+                knn = KNeighborsClassifier(n_neighbors=5, weights='distance')<br>
+                knn.fit(X_train_small, y_train_small)
+            </div>
+            <div class="insight-box"><strong>🏆 Where both excel:</strong> Logistic regression is baseline production model (fast interpretable), k-NN useful for localized fraud patterns but memory heavy. Hybrid ensemble possible.</div>
+        </div>
+
+        <!-- Performance comparison + hyperparameters -->
+        <div class="card">
+            <h2>⚡ Decision Guide: When to use Logistic Regression vs k-NN</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>Criteria</th><th>Logistic Regression</th><th>k-NN</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Training speed</td><td>Fast (optimization)</td><td>Instant (lazy, no real training)</td></tr>
+                    <tr><td>Inference speed</td><td>Very fast (simple linear calc)</td><td>Slow for large datasets (distance to all points)</td></tr>
+                    <tr><td>Interpretability</td><td>High (coefficients, odds ratios)</td><td>Low (black-box instance based)</td></tr>
+                    <tr><td>Non-linear boundaries</td><td>Needs feature engineering (polynomial)</td><td>Inherently non-linear</td></tr>
+                    <tr><td>Curse of dimensionality</td><td>Robust (regularization helps)</td><td>Severely affected (distance fails)</td></tr>
+                    <tr><td>Required data prep</td><td>Scaling optional (helpful for GD)</td><td>Essential scaling/normalization</td></tr>
+                </tbody>
+            </table>
+            <div class="flow-diagram">
+                <div class="flex-steps">
+                    <span class="step">✅ Small dataset, irregular patterns → k-NN</span>
+                    <span class="step">📈 Large dataset, need interpretability → Logistic Regression</span>
+                    <span class="step">⚡ Real-time inference with high accuracy → Logistic Regression + feature engineering</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hands-on intuition: decision boundary visual description -->
+        <div class="card">
+            <h2>🧪 Intuitive Example: Tumor Malignancy Classification</h2>
+            <p>Features: tumor size (mm) and patient age. Label: Malignant (1) or Benign (0). Compare the two classifiers.</p>
+            <div class="grid-2col">
+                <div>
+                    <div class="subhead">📐 Logistic Regression outcome</div>
+                    <p>Learns a linear decision boundary: <span class="highlight">P(Malignant) = sigmoid(0.08*size + 0.02*age - 4.5)</span>. For a given size/age, produces smooth probability. Works well when classes are linearly separable.</p>
+                </div>
+                <div>
+                    <div class="subhead">👥 k-NN outcome (k=5)</div>
+                    <p>Draws irregular boundary based on actual tumor cases. For a new tumor, looks at 5 most similar tumors (closest in size/age space). If 3/5 are malignant → classify malignant. Good for complex local patterns.</p>
+                </div>
+            </div>
+            <div class="example-block">
+                💡 <strong>Pro tip:</strong> For medical applications, logistic regression provides confidence intervals and odds ratios (e.g., "each unit increase in size raises odds of malignancy by 12%"). k-NN might capture rare subtypes but is less explainable to doctors.
+            </div>
+        </div>
+
+        <!-- Where and how to implement successfully -->
+        <div class="card">
+            <h2>🌍 Where in the real world? Industry applications</h2>
+            <div class="grid-2col">
+                <div>
+                    <p><strong>🏦 Financial services:</strong> Logistic regression for credit scoring, fraud detection. k-NN for anomaly detection in transaction sequences.</p>
+                    <p><strong>🩺 Healthcare:</strong> Logistic regression predicts disease onset (diabetes, heart failure). k-NN used in medical image retrieval (find similar histology patches).</p>
+                </div>
+                <div>
+                    <p><strong>📱 E‑commerce:</strong> Logistic regression for click-through rate (CTR) estimation. k-NN for "customers who bought this also liked" (collaborative filtering).</p>
+                    <p><strong>🌾 Agriculture:</strong> Logistic regression to predict crop disease (healthy/infected). k-NN for soil type classification based on sensor readings.</p>
+                </div>
+            </div>
+            <hr>
+            <p><span class="highlight">✅ Best practice summary:</span> Start with logistic regression as a baseline; if decision boundary is highly non-linear and dataset moderate size, try k-NN with cross-validated k. Always standardize features for k-NN. For probability outputs and feature importance, logistic regression wins.</p>
+        </div>
+
+        <!-- Day 5 wrap up -->
+        <div style="background: #fef3c7; border-radius: 1.2rem; padding: 1.2rem 1.5rem; margin-top: 0.5rem; border-left: 6px solid #f97316;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🎯 Day 5 Core Takeaways:</p>
+            <p>✔ <strong>Logistic Regression</strong> = probabilistic linear classifier, great for interpretable baselines, outputs risk scores.<br>
+            ✔ <strong>k-NN</strong> = non-parametric lazy learner, captures local structures but requires distance metrics & scaling.<br>
+            ✔ Both are fundamental classification algorithms — understand their trade-offs: speed vs. flexibility, linear vs. non-linear, memory vs. parametric.<br>
+            ✔ Where to apply: fraud, medicine, recommendations, NLP sentiment. Start simple, then ensemble!</p>
+        </div>
+    </div>
+    <footer>
+        📊 Classification algorithms — Logistic Regression & k-NN: every data scientist's essential toolkit. Practice with sklearn, tune hyperparameters, and visualize decision boundaries!
+    </footer>
+</div>
+</body>
+</html>
