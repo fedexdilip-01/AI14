@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>LLMs & Prompt Engineering: GPT, Claude, Llama | Master Generative AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f0ff 0%, #e5e0f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #1a102f;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(125deg, #0f172a 0%, #2d3a6e 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 880px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #8b5cf6;
+            color: white;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #ede9fe;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #4c1d95, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #8b5cf6;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #6d28d9;
+            font-size: 1.05rem;
+            margin: 1rem 0 0.3rem 0;
+        }
+
+        .insight-box {
+            background: #f5f3ff;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .example-box {
+            background: #fef9f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            border: 1px solid #ffe2bf;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0b0f19;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', 'SF Mono', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .compare-table th, .compare-table td {
+            border: 1px solid #cdc4e0;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background: #ede9fe;
+            font-weight: 700;
+        }
+
+        .highlight {
+            background: #fde68a;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #7b341e;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cdc4e0, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fcfafe;
+            color: #2d3a6e;
+        }
+
+        .llm-icon {
+            background: #f3e8ff;
+            border-radius: 1rem;
+            padding: 0.6rem;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .code-block {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🤖 LLMs & Prompt Engineering: GPT, Claude, Llama</h1>
+        <p>Unlock the power of Large Language Models — understand architecture, master prompting techniques, and build next-gen AI applications.</p>
+        <div class="badge">Day 12 — Generative AI Foundations</div>
+    </div>
+    <div class="content">
+
+        <!-- What & Why LLMs -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📌 What are Large Language Models (LLMs)?</h2>
+                <div class="subhead">✦ Definition</div>
+                <p>LLMs are neural networks with billions of parameters trained on massive text corpora (internet, books, code). They predict next tokens, enabling text generation, reasoning, translation, code writing, and more.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why LLMs revolutionize AI?</strong> — Zero-shot & few-shot learning, emergent abilities, human-like conversation, no task-specific fine-tuning needed for many applications.
+                </div>
+                <div class="example-box">
+                    <strong>💡 Examples:</strong> GPT-4 (OpenAI), Claude (Anthropic), Llama 3 (Meta), Gemini (Google). They power ChatGPT, Copilot, and countless agents.
+                </div>
+                <p><span class="highlight">Key architecture:</span> Transformer decoder-only (GPT style) — self-attention + feed-forward layers. Trained via next-token prediction.</p>
+            </div>
+
+            <div class="card">
+                <h2>✍️ What is Prompt Engineering?</h2>
+                <div class="subhead">✦ The art of talking to LLMs</div>
+                <p>Prompt engineering is designing and optimizing input prompts to elicit desired responses from LLMs. It's the primary interface for controlling model behavior without fine-tuning.</p>
+                <div class="insight-box">
+                    🎯 <strong>Why prompt engineering matters?</strong> — 80% of LLM success depends on prompt quality. Good prompts reduce hallucinations, improve reasoning, and align outputs with goals.
+                </div>
+                <div class="code-block">
+# Bad prompt: "Write about AI"
+# Good prompt (specific + role):
+"You are an expert ML engineer. Explain transformers in 3 paragraphs suitable for college students. Include attention mechanism intuition."
+                </div>
+                <p><strong>Where used:</strong> Chatbots, content generation, code assistants, data extraction, summarization, reasoning tasks.</p>
+            </div>
+        </div>
+
+        <!-- Comparison: GPT, Claude, Llama -->
+        <div class="card">
+            <h2>⚡ Major LLMs Comparison: GPT · Claude · Llama</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Model</th><th>Creator</th><th>Key Strengths</th><th>Typical Use Cases</th><th>Access</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>GPT-4 / GPT-4o</strong></td><td>OpenAI</td><td>Versatile, strong coding, reasoning, multimodal (GPT-4o).</td><td>ChatGPT, API, Copilot, research.</td><td>API / ChatGPT (paid), Azure</td></tr>
+                    <tr><td><strong>Claude 3.5 Sonnet</strong></td><td>Anthropic</td><td>Safety, long context (200K), nuanced conversations, ethical alignment.</td><td>Enterprise, legal, long document analysis.</td><td>Claude.ai, API</td></tr>
+                    <tr><td><strong>Llama 3 / 3.1</strong></td><td>Meta</td><td>Open weights, strong performance, customizable, 8B to 405B params.</td><td>Local deployment, research, fine-tuning.</td><td>Open-source (HuggingFace, Ollama)</td></tr>
+                </tbody>
+            </table>
+            <div class="insight-box">
+                💡 <strong>How to choose:</strong> Use GPT for general performance & multimodal; Claude for long-context safety; Llama for local/private on-premise deployments.
+            </div>
+        </div>
+
+        <!-- Prompt Engineering Techniques Deep Dive -->
+        <div class="card">
+            <h2>🛠️ Prompt Engineering: Core Techniques (with Examples)</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">🎯 Zero-shot & Few-shot</div>
+                    <div class="code-block">
+# Zero-shot: direct instruction
+"Classify sentiment of 'The product is amazing!' as Positive/Neutral/Negative."
+
+# Few-shot: provide examples
+"Review: 'Terrible service' → Negative
+Review: 'Love this' → Positive
+Review: 'Not bad' → Neutral
+Review: 'Fantastic quality' →"
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">🧠 Chain-of-Thought (CoT)</div>
+                    <div class="code-block">
+"Roger has 5 apples. He gives 2 to Mary, then buys 3 more. How many apples?
+Let's think step by step:
+1. Start: 5 apples
+2. Gives 2: 5-2 = 3
+3. Buys 3: 3+3 = 6
+Answer: 6 apples"
+                    </div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">👤 Role Prompting</div>
+                    <div class="code-block">
+"You are a senior data scientist. Explain overfitting to a non-technical product manager in two sentences."
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">📏 Structured Output (JSON)</div>
+                    <div class="code-block">
+"Extract name, age, and profession from: 'John, 32, engineer'. Output JSON: {\"name\": ..., \"age\": ..., \"profession\": ...}"
+                    </div>
+                </div>
+            </div>
+            <div class="example-box">
+                🚀 <strong>Pro tip:</strong> Use temperature (0=deterministic, 1=creative). Lower temp for factual tasks, higher for creative writing.
+            </div>
+        </div>
+
+        <!-- Case Study: Real Application -->
+        <div class="card">
+            <h2>🔎 Case Study: Building a Customer Support Assistant with Prompt Engineering</h2>
+            <p><strong>Goal:</strong> Classify support tickets and generate polite, helpful responses using an LLM (GPT-4 / Claude).</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📋 System prompt</div>
+                    <div class="code-block">
+You are a customer support agent for TechCorp.
+Rules:
+- Be polite, concise, and helpful.
+- If the issue is technical (login, crash, bug) → respond with troubleshooting steps.
+- If refund request → escalate to human agent.
+- Keep tone professional but friendly.
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">💬 User prompt example</div>
+                    <div class="code-block">
+Customer: "I can't log into my account. I've reset password twice. Please help."
+Agent: [LLM generates response]
+                    </div>
+                </div>
+            </div>
+            <div class="insight-box">
+                📈 <strong>Result:</strong> LLM resolves 70% of tickets automatically, escalates complex cases. Reduces human agent workload by 60%. Prompt engineering crucial for safety & tone.
+            </div>
+        </div>
+
+        <!-- What/Why/How/Where summary -->
+        <div class="card">
+            <h2>📋 Complete Reference: LLMs & Prompt Engineering</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Concept</th><th>What</th><th>Why</th><th>How (implementation)</th><th>Where (real world)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>LLMs (GPT, Claude, Llama)</strong></td><td>Large transformer models trained on text.</td><td>Human-like generation, reasoning, few-shot learning.</td><td>API calls (OpenAI, Anthropic) or local (Ollama, HuggingFace).</td><td>Chatbots, content creation, code generation, research.</td></tr>
+                    <tr><td><strong>Zero-shot Prompting</strong></td><td>Task without examples.</td><td>Simple, minimal tokens, general use.</td><td>Direct instruction: "Translate to French: Hello"</td><td>Quick classification, summarization.</td></tr>
+                    <tr><td><strong>Few-shot Prompting</strong></td><td>Provide 2-5 examples in prompt.</td><td>Improves accuracy, aligns output format.</td><td>Include input-output pairs before target.</td><td>Format extraction, style imitation.</td></tr>
+                    <tr><td><strong>Chain-of-Thought</strong></td><td>Step-by-step reasoning.</td><td>Boosts math/logic performance, reduces hallucination.</td><td>Add "Let's think step by step" or explicit reasoning.</td><td>Math problems, multi-step reasoning, puzzles.</td></tr>
+                    <tr><td><strong>Role Prompting</strong></td><td>Assign persona or expertise.</td><td>Contextualizes response style & depth.</td><td>"You are a financial advisor..."</td><td>Role-playing, specialized advice, consistent tone.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Advanced: RAG & Fine-tuning brief -->
+        <div class="card">
+            <h2>🚀 Beyond Prompting: RAG & Fine-tuning</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📚 Retrieval-Augmented Generation (RAG)</div>
+                    <p>Combine LLM with external knowledge base (vector DB). Retrieve relevant documents, inject into prompt → factual, up-to-date answers without retraining.</p>
+                    <div class="code-block">
+# Pseudo RAG pipeline
+docs = vector_search(query)
+context = "\n".join(docs)
+prompt = f"Answer based on context: {context}\nQuestion: {query}"
+response = llm.generate(prompt)
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">⚙️ Fine-tuning</div>
+                    <p>Train LLM further on domain-specific data. Useful for custom style, new knowledge, or cheaper models. Open-source Llama often fine-tuned.</p>
+                    <div class="insight-box">
+                        💡 <strong>Where used:</strong> RAG for customer support (product manuals), fine-tuning for medical/legal compliance.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Best practices & Ethics -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📏 Prompt Engineering Best Practices</h2>
+                <ul style="margin-left: 1.2rem;">
+                    <li><span class="highlight">Be specific & explicit</span> — vague prompts yield vague answers.</li>
+                    <li><span class="highlight">Use delimiters</span> (```, """, <tags>) to separate instructions and input.</li>
+                    <li><span class="highlight">Ask for step-by-step</span> (CoT) to improve reasoning.</li>
+                    <li><span class="highlight">Set output format</span> (JSON, markdown, bullet points).</li>
+                    <li><span class="highlight">Iterate & test</span> — treat prompts as code, version them.</li>
+                </ul>
+                <div class="code-block">
+# Example with delimiters
+Summarize the text between <text> tags:
+<text>LLMs are large transformer models...</text>
+Output format: one paragraph, max 50 words.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚠️ Ethical Considerations & Hallucination</h2>
+                <div class="subhead">✦ LLMs can confidently generate false information (hallucination).</div>
+                <p><strong>Mitigations:</strong> RAG with grounding, temperature low, ask for citations, human-in-the-loop for critical tasks.</p>
+                <div class="example-box">
+                    🔐 <strong>Where safety matters:</strong> Medical advice, legal opinions, financial decisions — never rely solely on LLM output without verification.
+                </div>
+                <div class="insight-box">
+                    ✅ <strong>Responsible prompt engineering:</strong> Add safety guardrails, avoid jailbreak attempts, respect privacy (no PII in prompts).
+                </div>
+            </div>
+        </div>
+
+        <!-- Hands-on code example: Calling LLM API -->
+        <div class="card">
+            <h2>💻 Hands-on: Calling an LLM (OpenAI API / Local Llama)</h2>
+            <div class="code-block">
+# OpenAI API example
+import openai
+openai.api_key = "your-key"
+
+response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You are a helpful coding assistant."},
+        {"role": "user", "content": "Write a Python function to check if a number is prime."}
+    ],
+    temperature=0.3
+)
+print(response.choices[0].message.content)
+
+# Local Llama with Ollama
+# ollama run llama3.1 "Explain quantum computing in one sentence"
+            </div>
+            <div class="insight-box">
+                🌍 <strong>Where to start:</strong> Use free playgrounds (Claude, ChatGPT, Gemini) to prototype prompts. Then move to API for integration.
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div style="background: #f3e8ff; border-radius: 1.2rem; padding: 1.3rem 1.5rem; border-left: 6px solid #8b5cf6; margin-top: 0.8rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🎯 Day 12 Core Takeaways — LLMs & Prompt Engineering:</p>
+            <p>✔ <strong>What:</strong> LLMs are large transformer models (GPT, Claude, Llama) that excel at text generation and reasoning.<br>
+            ✔ <strong>Why:</strong> They're the foundation of generative AI — capable of zero-shot, few-shot, and chain-of-thought tasks.<br>
+            ✔ <strong>How:</strong> Master prompt engineering: role-playing, few-shot, CoT, structured outputs. Use APIs or open-source models.<br>
+            ✔ <strong>Where:</strong> Customer support, code assistants, content creation, data extraction, research, creative writing.<br>
+            ✔ Next steps: Experiment with RAG, fine-tuning, and local deployment (Llama). Prompt engineering is the #1 skill for LLM applications.</p>
+        </div>
+    </div>
+    <footer>
+        🧠 LLMs + Prompt Engineering = Superpowered AI development. Start prompting, iterate, and build the next generation of intelligent applications.
+    </footer>
+</div>
+</body>
+</html>
