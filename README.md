@@ -6,3 +6,4 @@
 <h2>4‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day4.html
 <h2>5‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day5.html
 <h2>6‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day6.html
+<h2>7‑Day -Core ML Concepts: Features · Labels · Training & Testing </h2> https://fedexdilip-01.github.io/AI14/Day7.html
