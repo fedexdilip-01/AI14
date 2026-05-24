@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Day 2: Python Basics for AI - NumPy, Pandas, Matplotlib</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
+            color: #1a2c3e;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0B3B5F, #1B7F7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #2c4e6b;
+            max-width: 750px;
+            margin: 0.5rem auto 0;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(4px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+
+        /* card layout grid */
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0,0,0,0.02);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            flex: 1 1 320px;
+            border: 1px solid rgba(27, 127, 122, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 45px -16px rgba(0, 32, 32, 0.2);
+        }
+
+        .card-header {
+            padding: 1.5rem 1.8rem 0.8rem;
+            border-bottom: 2px solid #e9edf2;
+        }
+
+        .card-header h2 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .numpy-badge { color: #4D77FF; }
+        .pandas-badge { color: #E84E2D; }
+        .plot-badge { color: #2C9E6F; }
+
+        .card-content {
+            padding: 1.5rem 1.8rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 1.8rem;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid;
+            padding-left: 12px;
+        }
+
+        .numpy-border { border-left-color: #4D77FF; }
+        .pandas-border { border-left-color: #E84E2D; }
+        .plot-border { border-left-color: #2C9E6F; }
+
+        .section-text {
+            color: #2c3f4f;
+            margin-bottom: 0.75rem;
+            font-weight: 450;
+        }
+
+        pre {
+            background: #0f1b24;
+            color: #e2f0f7;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            margin: 0.9rem 0;
+            box-shadow: inset 0 1px 4px #00000020, 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #eef3f7;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #126b6b;
+        }
+
+        .example-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #547e8f;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, #cbdbe2, transparent);
+        }
+
+        .footnote {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: #4b6e81;
+            border-top: 1px solid #cbdde6;
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 780px) {
+            .hero h1 { font-size: 2rem; }
+            .card-header h2 { font-size: 1.5rem; }
+            .container { padding: 0 0.5rem; }
+            pre { font-size: 0.75rem; }
+        }
+
+        .inline-icon {
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📘 Day 2: Python Essentials for AI</h1>
+        <p>🔢 NumPy · 🐼 pandas · 📊 Matplotlib — the holy trinity of AI/ML data workflows</p>
+    </div>
+
+    <div class="grid">
+        <!-- NumPy Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="numpy-badge">🔷 NumPy</span></h2>
+                <p style="font-size: 0.9rem; margin-top: 6px; color: #2c6480;">Numerical Python — backbone of scientific computing</p>
+            </div>
+            <div class="card-content">
+                <div class="section">
+                    <div class="section-title numpy-border">❓ WHAT</div>
+                    <div class="section-text">NumPy is the fundamental package for array computing in Python. It provides high-performance, multi-dimensional <strong>ndarray</strong> objects, vectorized mathematical functions, and linear algebra routines. In AI, nearly every dataset, image, or matrix becomes a NumPy array behind the scenes.</div>
+                </div>
+                <div class="section">
+                    <div class="section-title numpy-border">⚡ WHY for AI</div>
+                    <div class="section-text">✅ Blazing fast vectorized operations (10x–100x faster than Python lists)<br>✅ Memory efficiency & contiguous storage<br>✅ Foundation for TensorFlow, PyTorch, scikit-learn, SciPy<br>✅ Linear algebra, random sampling, statistical tools — essential for neural network weight matrices.</div>
+                </div>
+                <div class="section">
+                    <div class="section-title numpy-border">🛠️ HOW (example)</div>
+                    <pre><code>import numpy as np
+
+# Create arrays & vectorized operations
+arr = np.array([1, 2, 3, 4])
+print(arr * 2)               # [2 4 6 8]
+
+# 2D matrix for AI features
+X = np.random.randn(100, 5)  # 100 samples, 5 features
+weights = np.array([0.2, -0.5, 0.1, 0.7, 0.3])
+
+# Linear transformation (dot product)
+predictions = X @ weights     # vectorized, no loops!
+
+# Reshape & indexing
+images = np.random.randint(0, 256, (32, 28, 28), dtype=np.uint8)
+flattened = images.reshape(32, -1)   # 32 images, 784 pixels
+print(flattened.shape)               # (32, 784)</code></pre>
+                    <div class="example-label">🔬 REAL AI SNIPPET</div>
+                    <pre><code># Normalize features (standard scaling)
+mean = X.mean(axis=0)
+std = X.std(axis=0)
+X_norm = (X - mean) / (std + 1e-8)</code></pre>
+                </div>
+                <div class="section">
+                    <div class="section-title numpy-border">🌍 WHERE used in AI</div>
+                    <div class="section-text">• Data preprocessing (image pixels → arrays, text embeddings)<br>• Model parameters storage (weights, biases)<br>• Loss functions & gradient computations (MSE, cross-entropy)<br>• Computer vision — filter kernels, image augmentation<br>• Any numeric simulation, deep learning frameworks exchange data via NumPy.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- pandas Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="pandas-badge">🐼 pandas</span></h2>
+                <p style="font-size: 0.9rem; margin-top: 6px; color: #b65132;">Data wrangling & analysis — the Excel-on-steroids for AI</p>
+            </div>
+            <div class="card-content">
+                <div class="section">
+                    <div class="section-title pandas-border">❓ WHAT</div>
+                    <div class="section-text">pandas provides two core structures: <strong>Series</strong> (1D labeled) and <strong>DataFrame</strong> (2D table with rows & columns). It makes messy real-world data clean, transformable, and ready for ML models. Missing values, merging, grouping, pivot — pandas handles it all elegantly.</div>
+                </div>
+                <div class="section">
+                    <div class="section-title pandas-border">⚡ WHY for AI</div>
+                    <div class="section-text">✅ Real-world datasets are messy — pandas has 100+ functions to clean, filter, aggregate.<br>✅ Seamless integration with NumPy & matplotlib (extract values as arrays).<br>✅ Feature engineering: create new columns, apply functions, split/apply/combine.<br>✅ Handle time series, categorical data, missing values — critical for preprocessing pipelines.</div>
+                </div>
+                <div class="section">
+                    <div class="section-title pandas-border">🛠️ HOW (example)</div>
+                    <pre><code>import pandas as pd
+import numpy as np
+
+# Load / create DataFrame
+df = pd.DataFrame({
+    'age': [25, 32, 47, 51, 29],
+    'salary': [52000, 68000, 95000, 110000, 48000],
+    'experience_yrs': [2, 8, 15, 20, 3],
+    'purchased': [1, 0, 1, 1, 0]
+})
+
+# Explore & clean
+print(df.head())
+print(df.isnull().sum())         # check missing
+
+# Feature engineering
+df['salary_per_year_exp'] = df['salary'] / (df['experience_yrs'] + 1)
+df['age_group'] = pd.cut(df['age'], bins=[0,30,45,100], labels=['Young', 'Mid', 'Senior'])
+
+# Group by analysis
+grouped = df.groupby('purchased')['salary'].mean()
+print(grouped)
+
+# Filter & prepare for AI
+X = df[['age', 'experience_yrs', 'salary_per_year_exp']].values  # to NumPy
+y = df['purchased'].values</code></pre>
+                    <div class="example-label">🧹 MISSING DATA HANDLING (real AI pipeline)</div>
+                    <pre><code># Suppose salary has NaNs
+df['salary'].fillna(df['salary'].median(), inplace=True)
+
+# One-hot encoding for categorical columns
+df_encoded = pd.get_dummies(df, columns=['age_group'], drop_first=True)</code></pre>
+                </div>
+                <div class="section">
+                    <div class="section-title pandas-border">🌍 WHERE used in AI</div>
+                    <div class="section-text">• Exploratory Data Analysis (EDA) — discover patterns, outliers, correlations<br>• Data prep for regression/classification: handle date columns, text categories<br>• Financial AI, recommendation systems (user-item interaction logs)<br>• Merging multiple data sources (CSV, SQL, JSON, Excel) into one coherent training set<br>• Feature selection and transformation before feeding into scikit-learn pipelines.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matplotlib Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="plot-badge">📈 Matplotlib</span></h2>
+                <p style="font-size: 0.9rem; margin-top: 6px; color: #1f7a5a;">Visualization — the AI storyteller</p>
+            </div>
+            <div class="card-content">
+                <div class="section">
+                    <div class="section-title plot-border">❓ WHAT</div>
+                    <div class="section-text">Matplotlib is the foundational plotting library in Python. It gives full control over figures, axes, and styles — from line plots to histograms, scatter plots, and 3D visualizations. In AI, we use it to understand data, debug models, and present insights.</div>
+                </div>
+                <div class="section">
+                    <div class="section-title plot-border">⚡ WHY for AI</div>
+                    <div class="section-text">✅ Visualize dataset distributions before modeling (spot skewness, anomalies).<br>✅ Model diagnostics: loss curves, accuracy trends, confusion matrices.<br>✅ Feature importance visualization, decision boundaries, residual plots.<br>✅ Communicate findings to stakeholders — matplotlib + seaborn work seamlessly together.</div>
+                </div>
+                <div class="section">
+                    <div class="section-title plot-border">🛠️ HOW (example)</div>
+                    <pre><code>import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample data: training loss & validation accuracy
+epochs = np.arange(1, 21)
+train_loss = 0.9 * np.exp(-epochs/5) + 0.1
+val_acc = 0.5 + 0.4 * (1 - np.exp(-epochs/8))
+
+plt.figure(figsize=(10,4))
+
+plt.subplot(1,2,1)
+plt.plot(epochs, train_loss, 'o-', color='#2C9E6F', label='Train Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.title('Loss Curve — Model Convergence')
+plt.grid(True, alpha=0.3)
+plt.legend()
+
+plt.subplot(1,2,2)
+plt.plot(epochs, val_acc, 's-', color='#E84E2D', label='Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.title('Accuracy Improvement')
+plt.ylim(0.4, 1.0)
+plt.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+                    <div class="example-label">📊 AI DIAGNOSTIC: CONFUSION MATRIX STYLE</div>
+                    <pre><code>from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+
+# assume y_true, y_pred
+cm = np.array([[85, 12], [23, 80]])
+plt.imshow(cm, interpolation='nearest', cmap='Blues')
+plt.title('Confusion Matrix')
+plt.colorbar()
+plt.xlabel('Predicted')
+plt.ylabel('True')
+for i in range(2):
+    for j in range(2):
+        plt.text(j, i, str(cm[i, j]), ha='center', va='center', color='red')
+plt.show()</code></pre>
+                </div>
+                <div class="section">
+                    <div class="section-title plot-border">🌍 WHERE used in AI</div>
+                    <div class="section-text">• EDA: histograms, boxplots (outlier detection), pairplots (feature relationships)<br>• Training monitoring — real-time loss/accuracy plots in Jupyter notebooks<br>• Hyperparameter effect: plot performance vs. learning rate / regularization strength<br>• Clustering visualizations (PCA reduced 2D plots for K-means)<br>• SHAP / LIME explanations (feature importance bar charts) – built on matplotlib.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Extra combined real-world pipeline demonstration -->
+    <div style="margin-top: 3rem; background: white; border-radius: 2rem; padding: 2rem; box-shadow: 0 16px 30px -12px rgba(0,0,0,0.08); border: 1px solid #dfe8ef;">
+        <h3 style="display: flex; align-items: center; gap: 12px; font-size: 1.6rem; margin-bottom: 1rem;">🧠 End‑to‑End AI Mini Pipeline <span style="font-size: 0.9rem; background: #eef2f5; padding: 4px 12px; border-radius: 40px;">(NumPy + pandas + matplotlib in action)</span></h3>
+        <p style="margin-bottom: 1rem; color: #2c5a6e;">This snippet simulates a full data science workflow: generate synthetic data → pandas cleaning & feature engineering → NumPy for train/split and linear regression → matplotlib for visualization of predictions vs true values.</p>
+        <pre style="background: #0f1722; font-size: 0.8rem;"><code>import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# 1️⃣ synthetic house price dataset (pandas + numpy)
+np.random.seed(42)
+n = 200
+data = {
+    'sqft': np.random.normal(1800, 500, n),
+    'bedrooms': np.random.randint(1, 5, n),
+    'age': np.random.randint(0, 50, n),
+}
+df = pd.DataFrame(data)
+df['price'] = (df['sqft'] * 120) + (df['bedrooms'] * 8000) - (df['age'] * 250) + np.random.normal(0, 15000, n)
+
+# 2️⃣ pandas: feature engineering & outlier cap
+df['price_per_sqft'] = df['price'] / df['sqft']
+df['house_age_group'] = pd.cut(df['age'], bins=[0,10,30,100], labels=['new', 'mid', 'old'])
+X = df[['sqft', 'bedrooms', 'age']].values
+y = df['price'].values
+
+# 3️⃣ numpy: train test split (manual indexing)
+indices = np.random.permutation(len(X))
+split = int(0.8 * len(X))
+train_idx, test_idx = indices[:split], indices[split:]
+X_train, X_test = X[train_idx], X[test_idx]
+y_train, y_test = y[train_idx], y[test_idx]
+
+# 4️⃣ sklearn model (AI step) 
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+# 5️⃣ matplotlib visualization
+plt.figure(figsize=(7,5))
+plt.scatter(y_test, y_pred, alpha=0.6, color='#1B7F7A', edgecolors='white')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('True Price ($)')
+plt.ylabel('Predicted Price ($)')
+plt.title('AI Model: Linear Regression Predictions vs Reality')
+plt.grid(alpha=0.2)
+plt.tight_layout()
+plt.show()
+
+print(f"R² Score on test set: {model.score(X_test, y_test):.3f}")
+</code></pre>
+        <div class="example-label" style="margin-top: 0.5rem;">💡 Explanation</div>
+        <div class="section-text">🔹 <strong>pandas</strong> builds the raw table, creates new features (price_per_sqft, age group) — ready for exploration.<br>
+        🔹 <strong>NumPy</strong> handles random permutations, efficient slicing, and array conversion for ML libraries.<br>
+        🔹 <strong>Matplotlib</strong> visualizes prediction quality, helping you debug if model under/overfits. This pattern is the everyday routine of AI engineers.</div>
+    </div>
+
+    <!-- comparison summary: why these three -->
+    <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 2.5rem 0; justify-content: space-between;">
+        <div style="flex: 1; background: #F0F6FA; border-radius: 1.5rem; padding: 1.2rem 1.6rem;">
+            <h4 style="display: flex; gap: 8px;">🔷 NumPy = Math & computation engine</h4>
+            <p>Handles matrix multiplications, random number generation, linear algebra for deep learning. All AI frameworks convert tensors to/from NumPy.</p>
+        </div>
+        <div style="flex: 1; background: #FFF2EC; border-radius: 1.5rem; padding: 1.2rem 1.6rem;">
+            <h4 style="display: flex; gap: 8px;">🐼 pandas = Data Janitor & feature lab</h4>
+            <p>From messy CSV to clean dataframe ready for training. Filtering, grouping, merging, handling missing values — 80% of AI project time.</p>
+        </div>
+        <div style="flex: 1; background: #EAF9F2; border-radius: 1.5rem; padding: 1.2rem 1.6rem;">
+            <h4 style="display: flex; gap: 8px;">📊 Matplotlib = Storyteller & debugging lens</h4>
+            <p>Make your data talk: error distribution, learning curves, class imbalances, feature correlations — essential for model interpretability.</p>
+        </div>
+    </div>
+
+    <div class="footnote">
+        📌 Mastering NumPy, pandas, and matplotlib forms the foundation of every AI/ML engineer's toolkit — from Kaggle competitions to production-level computer vision.<br>
+        ⚙️ *Day 2: Core Python libraries — experiment with provided code in Jupyter/Colab to build intuition.*
+    </div>
+</div>
+</body>
+</html>
