@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ML Evaluation Metrics: Accuracy, Precision, Recall, F1 | Day 6</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f4f7fb 0%, #e2e8f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #0a1c2f;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(125deg, #0f2b3d 0%, #1b4f6e 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 780px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #f4c542;
+            color: #1e2f3a;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 22px -8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #e9edf2;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.65rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #1b4f6e, #d97706);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #d97706;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #1e5a7a;
+            font-size: 1.05rem;
+            margin: 0.8rem 0 0.3rem 0;
+        }
+
+        .formula-box {
+            background: #f0f4f9;
+            padding: 0.8rem 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin: 0.9rem 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .insight {
+            background: #fef9e6;
+            border-left: 4px solid #e07c1f;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+        }
+
+        .example {
+            background: #eef3fc;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #cbdde9;
+        }
+
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 0.8rem 1rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .confusion-matrix {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .matrix {
+            display: grid;
+            grid-template-columns: auto repeat(2, 1fr);
+            gap: 0.3rem;
+            background: #f1f5f9;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .matrix-cell {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.6rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        .highlight {
+            background: #fed7aa;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #9a3412;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #eef2ff;
+            font-weight: 700;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbd5e1, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.2rem;
+            background: #fcfdfe;
+            color: #334155;
+        }
+
+        @media (max-width: 700px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📊 Evaluation Metrics: Accuracy · Precision · Recall · F1 Score</h1>
+        <p>Master the art of measuring classification performance — when to use which metric and why accuracy can be misleading.</p>
+        <div class="badge">Day 6 — Model Evaluation & Confusion Matrix Deep Dive</div>
+    </div>
+    <div class="content">
+
+        <!-- Confusion matrix foundation -->
+        <div class="card">
+            <h2>🔍 Foundation: The Confusion Matrix</h2>
+            <p>All metrics derive from four fundamental counts based on predictions vs actual labels (binary classification).</p>
+            <div class="confusion-matrix">
+                <div class="matrix">
+                    <div></div><div><strong>Predicted YES</strong></div><div><strong>Predicted NO</strong></div>
+                    <div><strong>Actual YES</strong></div><div class="matrix-cell">✅ TP (True Positive)</div><div class="matrix-cell">❌ FN (False Negative)</div>
+                    <div><strong>Actual NO</strong></div><div class="matrix-cell">⚠️ FP (False Positive)</div><div class="matrix-cell">✅ TN (True Negative)</div>
+                </div>
+            </div>
+            <div class="insight">
+                🧠 <strong>Why this matters:</strong> TP = correct positives, TN = correct negatives, FP = false alarm (Type I error), FN = missed detection (Type II error). Metrics transform these into actionable scores.
+            </div>
+        </div>
+
+        <!-- 4 core metrics: detailed -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>🎯 Accuracy</h2>
+                <div class="subhead">✦ What is it?</div>
+                <p>Proportion of total correct predictions out of all predictions: <strong>(TP + TN) / (TP + TN + FP + FN)</strong>.</p>
+                <div class="formula-box">Accuracy = (Correct predictions) / (Total predictions)</div>
+                <div class="insight"><strong>🎯 Why & When?</strong> — Best when classes are balanced and all errors are equally bad. Simple, intuitive.</div>
+                <div class="example">
+                    <strong>📌 Example:</strong> Email spam filter with 950 non-spam + 50 spam emails. Model predicts 940 non-spam correctly, 30 spam correctly → Accuracy = (940+30)/1000 = 97%. But if it missed 20 spam emails, accuracy still high — misleading!
+                </div>
+                <div class="code-block">
+                    from sklearn.metrics import accuracy_score<br>
+                    acc = accuracy_score(y_true, y_pred)
+                </div>
+                <p><strong>⚠️ Where it fails:</strong> Imbalanced datasets (fraud, rare disease). A model predicting "not fraud" for all transactions can have 99.8% accuracy but is useless.</p>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Precision</h2>
+                <div class="subhead">✦ What is it?</div>
+                <p>Of all positive predictions, how many were actually correct? <strong>TP / (TP + FP)</strong>. Answers: "When model says positive, how often is it right?"</p>
+                <div class="formula-box">Precision = TP / (TP + FP)</div>
+                <div class="insight"><strong>🎯 Why use Precision?</strong> — Critical when false positives are costly. Spam detection: FP means marking legitimate email as spam (bad!).</div>
+                <div class="example">
+                    <strong>📌 Cancer screening:</strong> Out of 100 patients flagged as high-risk, only 30 actually have cancer → Precision = 30/100 = 30% (many false alarms). High precision needed to avoid unnecessary stress/operations.
+                </div>
+                <div class="code-block">
+                    from sklearn.metrics import precision_score<br>
+                    prec = precision_score(y_true, y_pred)
+                </div>
+                <p><strong>Where it shines:</strong> Recommendation systems, search engines (relevant results precision).</p>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h2>📌 Recall (Sensitivity / TPR)</h2>
+                <div class="subhead">✦ What is it?</div>
+                <p>Of all actual positives, how many did we correctly capture? <strong>TP / (TP + FN)</strong>. "How sensitive is model to positive class?"</p>
+                <div class="formula-box">Recall = TP / (TP + FN)</div>
+                <div class="insight"><strong>🎯 Why Recall matters?</strong> — Critical when missing a positive is expensive (false negatives). Fraud detection: missing fraud = huge loss. Disease detection: missing tumor = fatal.</div>
+                <div class="example">
+                    <strong>🚨 Fraud detection:</strong> 1000 fraudulent transactions. Model catches 950 → Recall = 950/1000 = 95% (excellent). Even if many false positives (low precision), high recall ensures frauds are flagged.
+                </div>
+                <div class="code-block">
+                    from sklearn.metrics import recall_score<br>
+                    rec = recall_score(y_true, y_pred)
+                </div>
+                <p><strong>Where recall dominates:</strong> Security threat detection, disaster warning, medical diagnosis.</p>
+            </div>
+
+            <div class="card">
+                <h2>⚖️ F1 Score</h2>
+                <div class="subhead">✦ What is it?</div>
+                <p>Harmonic mean of precision and recall: <strong>2 * (Precision * Recall) / (Precision + Recall)</strong>. Balances both metrics.</p>
+                <div class="formula-box">F1 = 2 × (P×R)/(P+R)</div>
+                <div class="insight"><strong>🎯 When to use F1?</strong> — Imbalanced classes, and you need a single metric that balances false positives & false negatives. Best when both precision and recall are important.</div>
+                <div class="example">
+                    <strong>🩺 Rare disease diagnosis:</strong> Precision = 80%, Recall = 60% → F1 = 2*(0.8*0.6)/(1.4) ≈ 0.686. F1 penalizes extreme imbalances unlike accuracy.
+                </div>
+                <div class="code-block">
+                    from sklearn.metrics import f1_score<br>
+                    f1 = f1_score(y_true, y_pred)
+                </div>
+                <p><strong>Where F1 shines:</strong> Document classification, customer churn prediction, models where you need trade-off interpretation.</p>
+            </div>
+        </div>
+
+        <!-- Deep-dive: what/why/how/where table -->
+        <div class="card">
+            <h2>📋 Complete Reference: What / Why / How / Where for each metric</h2>
+            <table>
+                <thead>
+                    <tr><th>Metric</th><th>What (formula)</th><th>Why (objective)</th><th>How to optimize</th><th>Where (industry)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Accuracy</strong></td><td>(TP+TN)/Total</td><td>Overall correctness</td><td>Balance dataset, adjust threshold</td><td>Balanced datasets: weather forecasting, MNIST digits</td></tr>
+                    <tr><td><strong>Precision</strong></td><td>TP/(TP+FP)</td><td>Minimize false positives</td><td>Increase classification threshold, feature engineering</td><td>Spam filters, ad click prediction, legal document review</td></tr>
+                    <tr><td><strong>Recall</strong></td><td>TP/(TP+FN)</td><td>Minimize false negatives</td><td>Lower threshold, handle class imbalance (SMOTE)</td><td>Disease screening, airplane fault detection, security</td></tr>
+                    <tr><td><strong>F1 Score</strong></td><td>Harmonic mean</td><td>Balance P/R, single metric</td><td>Precision-recall trade-off tuning</td><td>Information retrieval, customer churn, search ranking</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Real-world case study: Imbalanced classification -->
+        <div class="card">
+            <h2>🔎 Case Study: Credit Card Fraud Detection — choosing the right metric</h2>
+            <p><strong>Dataset:</strong> 100,000 transactions, 0.2% fraudulent (200 frauds). Model A predicts no fraud at all → Accuracy = 99.8% (terrible for business). Model B catches 170 frauds but has 500 false alarms.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📊 Metrics for Model B:</div>
+                    <ul style="margin-left: 1.2rem;">
+                        <li>Accuracy = (99,500 + 170)/100,000 ≈ 99.67% (still high but misleading)</li>
+                        <li>Precision = 170 / (170+500) = 25.4% → many false alarms</li>
+                        <li>Recall = 170/200 = 85% → catches most frauds ✅</li>
+                        <li>F1 = 2*(0.254*0.85)/(0.254+0.85) ≈ 0.39 (low due to precision)</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="subhead">🎯 Which metric to prioritize?</div>
+                    <p><span class="highlight">Business decision:</span> Missing fraud (low recall) costs heavy chargebacks → recall critical. But too many false positives (low precision) annoy customers. F1 helps balance. Typically fraud teams use <strong>recall@k% precision</strong>.</p>
+                </div>
+            </div>
+            <div class="code-block">
+                # Sklearn evaluation report for imbalanced case<br>
+                from sklearn.metrics import classification_report<br>
+                print(classification_report(y_true, y_pred, target_names=['Legit','Fraud']))
+            </div>
+            <div class="insight">💡 <strong>Key lesson:</strong> Never rely solely on accuracy for imbalanced data. Precision, recall, and F1 give a truthful picture.</div>
+        </div>
+
+        <!-- trade-offs and decision guide -->
+        <div class="card">
+            <h2>⚖️ Precision vs Recall Trade-Off (and how to handle)</h2>
+            <p>Adjusting classification threshold changes trade-off: Higher threshold → higher precision, lower recall. Lower threshold → higher recall, lower precision. F1 score finds sweet spot.</p>
+            <div class="example">
+                <strong>📌 Example:</strong> Logistic regression outputs probabilities. By default threshold=0.5. Lower to 0.3 → more positives, recall rises but precision drops. Use <strong>Precision-Recall curve</strong> to choose optimal threshold.
+            </div>
+            <div class="code-block">
+                # Adjust threshold for logistic regression<br>
+                y_scores = lr.predict_proba(X_test)[:,1]<br>
+                y_pred_custom = (y_scores > 0.3).astype(int)  # increase recall
+            </div>
+            <div class="insight">🎯 <strong>F1-beta score</strong> gives more weight to recall (beta >1) or precision (beta <1). For fraud detection, F2 (recall-focused) might be better.</div>
+        </div>
+
+        <!-- Multi-class metrics extensions -->
+        <div class="card">
+            <h2>🌐 Beyond Binary: Multi-class Metrics</h2>
+            <p>For 3+ classes, we can compute <strong>micro-averaging</strong> (aggregate TP, FP, FN globally) or <strong>macro-averaging</strong> (average per-class metrics).</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📌 Micro-average F1</div>
+                    <p>Suitable when class imbalance exists, favors majority class.</p>
+                </div>
+                <div>
+                    <div class="subhead">📌 Macro-average F1</div>
+                    <p>Gives equal weight to each class, better for balanced evaluation.</p>
+                </div>
+            </div>
+            <div class="code-block">
+                from sklearn.metrics import f1_score<br>
+                f1_macro = f1_score(y_true, y_pred, average='macro')<br>
+                f1_micro = f1_score(y_true, y_pred, average='micro')
+            </div>
+            <p><strong>Where used:</strong> Image classification (10 classes), news topic labeling, species recognition.</p>
+        </div>
+
+        <!-- where to apply in real workflows -->
+        <div class="card">
+            <h2>🌍 Industry Applications: When to Focus on Which Metric</h2>
+            <table>
+                <thead><tr><th>Domain</th><th>Primary Metric(s)</th><th>Reason</th></tr></thead>
+                <tbody>
+                    <tr><td>Medical diagnosis (cancer detection)</td><td><span class="highlight">Recall</span> (sensitivity) + F1</td><td>Minimize false negatives (missing disease is dangerous)</td></tr>
+                    <tr><td>Email spam filtering</td><td><span class="highlight">Precision</span></td><td>FP (legit mail to spam) is unacceptable, FN (spam in inbox) less harmful</td></tr>
+                    <tr><td>Fraud detection</td><td>Recall & Precision trade-off, F1</td><td>High recall needed, but too many FPs annoy customers</td></tr>
+                    <tr><td>Search engine ranking</td><td>Precision @ K, MAP</td><td>Relevant results on first page</td></tr>
+                    <tr><td>Customer churn prediction</td><td>F1, AUC-PR</td><td>Balance capturing churners vs wasting retention offers</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- final summary with best practices -->
+        <div style="background: #f1f5f9; border-radius: 1.2rem; padding: 1.3rem; border-left: 6px solid #d97706; margin-top: 1rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">📌 Day 6 Core Takeaways — Choose your metric wisely:</p>
+            <p>✔ <strong>Accuracy</strong> works only for balanced classes and equal error costs.<br>
+            ✔ <strong>Precision</strong> minimizes false alarms → use when FP cost high.<br>
+            ✔ <strong>Recall</strong> minimizes missed detections → use when FN cost high.<br>
+            ✔ <strong>F1 Score</strong> balances both → single metric for imbalanced data.<br>
+            ✔ Always look at confusion matrix, never trust a single metric blindly.<br>
+            ✔ <strong>Where to apply:</strong> Every classification project — from healthcare to finance to NLP.</p>
+        </div>
+    </div>
+    <footer>
+        📈 Evaluation metrics are the compass of ML: Accuracy, Precision, Recall, F1. Master them to build trustworthy, robust models.
+    </footer>
+</div>
+</body>
+</html>
