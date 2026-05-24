@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Build a Small Neural Network: TensorFlow & PyTorch | Hands-on Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f8fafc 0%, #e9eef3 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #0f172a;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(115deg, #0f172a 0%, #1e3a5f 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 850px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #3b82f6;
+            color: white;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #eef2f6;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #1e3a5f, #3b82f6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #1e40af;
+            font-size: 1.05rem;
+            margin: 1rem 0 0.3rem 0;
+        }
+
+        .insight-box {
+            background: #eff6ff;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .example-box {
+            background: #fef9f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            border: 1px solid #ffe2bf;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0b0f19;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', 'SF Mono', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        .compare-table th, .compare-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background: #eef2ff;
+            font-weight: 700;
+        }
+
+        .highlight {
+            background: #dbeafe;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbd5e1, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fcfdfe;
+            color: #1e3a5f;
+        }
+
+        .api-badge {
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        @media (max-width: 760px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .code-block {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🤖 Build a Small Neural Network: TensorFlow & PyTorch</h1>
+        <p>Hands-on deep learning: create, train, and evaluate a neural network using two industry-leading frameworks. From concept to code.</p>
+        <div class="badge">Day 9 — Practical Deep Learning | TensorFlow 2.x · PyTorch</div>
+    </div>
+    <div class="content">
+
+        <!-- Overview: What & Why -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>📌 What & Why Build a Small NN?</h2>
+                <div class="subhead">✦ What is a small neural network?</div>
+                <p>A compact feedforward network (Multi-Layer Perceptron) with 1-3 hidden layers. Used for classification, regression, or as a learning prototype before scaling up.</p>
+                <div class="insight-box">
+                    <strong>🎯 Why build from scratch (with frameworks)?</strong> — Understand core concepts (forward pass, backprop, optimization). Frameworks like TF/PyTorch abstract low-level ops but let you design architectures flexibly.
+                </div>
+                <div class="example-box">
+                    <strong>💡 Example task:</strong> Classify handwritten digits (MNIST) using a 2-layer neural network. Input: 784 pixels → Hidden: 128 neurons (ReLU) → Output: 10 classes (Softmax).
+                </div>
+                <p><strong>📌 Where used:</strong> Rapid prototyping, learning deep learning basics, building custom models for small-scale research, edge AI, and teaching.</p>
+            </div>
+
+            <div class="card">
+                <h2>⚙️ How: Core Components</h2>
+                <div class="subhead">🧩 Essential pieces</div>
+                <ul style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                    <li><span class="highlight">Layers</span> (Dense/Linear, Activation)</li>
+                    <li><span class="highlight">Loss function</span> (CrossEntropy, MSE)</li>
+                    <li><span class="highlight">Optimizer</span> (Adam, SGD)</li>
+                    <li><span class="highlight">Training loop</span> (forward pass, backward, update)</li>
+                </ul>
+                <div class="insight-box">
+                    ✅ Both TensorFlow and PyTorch provide automatic differentiation (Gradients) and GPU acceleration — essential for deep learning.
+                </div>
+                <div class="code-block">
+# Pseudocode for training loop
+for epoch in range(epochs):
+    for batch in dataloader:
+        outputs = model(batch.inputs)
+        loss = loss_fn(outputs, batch.labels)
+        optimizer.zero_grad()   # PyTorch style
+        loss.backward()
+        optimizer.step()
+                </div>
+            </div>
+        </div>
+
+        <!-- TensorFlow Implementation Example -->
+        <div class="card">
+            <h2>🐍 TensorFlow / Keras: Build a Small NN for MNIST</h2>
+            <div class="subhead">✦ Step-by-step example</div>
+            <p>Using Keras Sequential API — simplest way to build neural networks.</p>
+            <div class="code-block">
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+# Load dataset (MNIST)
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+x_train = x_train.reshape(-1, 784) / 255.0
+x_test = x_test.reshape(-1, 784) / 255.0
+
+# Build a small neural network
+model = keras.Sequential([
+    layers.Dense(128, activation='relu', input_shape=(784,)),
+    layers.Dropout(0.2),            # regularization
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+# Compile: optimizer, loss, metrics
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Train
+history = model.fit(x_train, y_train, batch_size=32, epochs=5, validation_split=0.1)
+
+# Evaluate
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f"Test accuracy: {test_acc:.4f}")
+            </div>
+            <div class="insight-box">
+                🚀 <strong>Why Keras/TensorFlow:</strong> High-level, beginner-friendly, production-ready. Built-in datasets, callbacks, and deployment (TF Lite, TF Serving).
+            </div>
+            <div class="example-box">
+                📈 <strong>Expected output:</strong> ~97% test accuracy after 5 epochs. The model learns digit recognition from raw pixels.
+            </div>
+        </div>
+
+        <!-- PyTorch Implementation Example -->
+        <div class="card">
+            <h2>🔥 PyTorch: Build the Same NN from Scratch</h2>
+            <div class="subhead">✦ Step-by-step with nn.Module</div>
+            <p>PyTorch offers imperative style and dynamic computation graphs — great for research & debugging.</p>
+            <div class="code-block">
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from torchvision import datasets, transforms
+
+# Load MNIST
+transform = transforms.Compose([transforms.ToTensor(), transforms.Lambda(lambda x: x.view(-1))])
+train_dataset = datasets.MNIST('./data', train=True, download=True, transform=transform)
+test_dataset = datasets.MNIST('./data', train=False, transform=transform)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32)
+
+# Define neural network class
+class SmallNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(784, 128)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.2)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 10)
+    
+    def forward(self, x):
+        x = self.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = self.relu(self.fc2(x))
+        x = self.fc3(x)   # no softmax here (CrossEntropyLoss includes it)
+        return x
+
+model = SmallNN()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop
+for epoch in range(5):
+    model.train()
+    for images, labels in train_loader:
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+    print(f"Epoch {epoch+1} completed")
+
+# Evaluation
+model.eval()
+correct = 0
+total = 0
+with torch.no_grad():
+    for images, labels in test_loader:
+        outputs = model(images)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+print(f"Test accuracy: {100 * correct / total:.2f}%")
+            </div>
+            <div class="insight-box">
+                🧠 <strong>Why PyTorch:</strong> More explicit control, Pythonic, dynamic graphs for variable-length inputs, used heavily in research (Transformers, LLMs).
+            </div>
+        </div>
+
+        <!-- What/Why/How/Where: Comparison table -->
+        <div class="card">
+            <h2>📋 Complete Reference: Small NN with TF vs PyTorch</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>Aspect</th><th>TensorFlow / Keras</th><th>PyTorch</th><th>Why it matters</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>What</strong></td><td>High-level Sequential API, eager execution, Keras layers</td><td>nn.Module, imperative forward definition, tensors</td><td>Both build & train neural nets with GPU support</td></tr>
+                    <tr><td><strong>Why choose</strong></td><td>Production deployment, quick prototyping, TFX ecosystem</td><td>Research flexibility, debugging ease, dynamic graphs</td><td>Goal determines framework: industry vs academia</td></tr>
+                    <tr><td><strong>How (training)</strong></td><td>model.fit() — abstracts loops</td><td>Manual loops — explicit control</td><td>PyTorch offers granular control; Keras faster for standard tasks</td></tr>
+                    <tr><td><strong>Where used</strong></td><td>Google-scale systems, mobile (TFLite), web (TF.js)</td><td>Research papers, OpenAI, Meta, dynamic models</td><td>Both power real-world AI: recommendation, vision, NLP</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Core Concepts Deep Dive -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>🧠 Understanding Forward & Backward Pass</h2>
+                <div class="subhead">✦ How a small NN learns</div>
+                <p><span class="highlight">Forward pass:</span> Input data flows through layers, activations produce predictions. <span class="highlight">Backward pass (backprop):</span> Gradients of loss w.r.t parameters computed via chain rule. Optimizer updates weights.</p>
+                <div class="code-block">
+# Conceptual gradient descent in frameworks
+with tf.GradientTape() as tape:    # TF
+    predictions = model(inputs)
+    loss = loss_fn(predictions, labels)
+gradients = tape.gradient(loss, model.trainable_variables)
+optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+                </div>
+                <div class="example-box">
+                    📚 <strong>Learning rate effect:</strong> Small LR → slow convergence; large LR → overshoot. Adam adaptive LR is default choice.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📊 Key Hyperparameters & Tuning</h2>
+                <div class="subhead">⚙️ Building your small NN successfully</div>
+                <ul style="margin-left: 1.2rem;">
+                    <li><strong>Number of layers/neurons:</strong> Start with 1-2 hidden layers, 64-128 neurons.</li>
+                    <li><strong>Batch size:</strong> 16, 32, 64 (memory/speed trade-off).</li>
+                    <li><strong>Epochs:</strong> Monitor validation loss; use early stopping.</li>
+                    <li><strong>Activation:</strong> ReLU for hidden, softmax/sigmoid for output.</li>
+                    <li><strong>Regularization:</strong> Dropout (0.2-0.5), L2 weight decay.</li>
+                </ul>
+                <div class="insight-box">
+                    🎯 <strong>Where to tune:</strong> Grid search or random search, but first overfit a single batch to debug model.
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-World Use Case: Binary Classification -->
+        <div class="card">
+            <h2>🌍 Real-World Where: Small NN for Customer Churn Prediction</h2>
+            <p><strong>Business problem:</strong> Predict if a customer will churn (leave) based on features like usage, support tickets, tenure.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📊 Data & architecture</div>
+                    <p>Features: 20 numeric columns → NN: Input(20) → Hidden(64, ReLU) → Dropout → Hidden(32, ReLU) → Output(1, Sigmoid). Binary cross-entropy loss.</p>
+                    <div class="code-block">
+# TensorFlow example for churn
+model = tf.keras.Sequential([
+    layers.Dense(64, activation='relu', input_shape=(20,)),
+    layers.Dropout(0.3),
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['AUC'])
+model.fit(X_train, y_train, epochs=20, validation_split=0.2)
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">✅ Deployment impact</div>
+                    <p>Small NN handles non-linear feature interactions better than logistic regression. Deployed on cloud (TF Serving) to flag high-risk customers for retention team. <span class="highlight">Precision-Recall optimized.</span></p>
+                </div>
+            </div>
+            <div class="insight-box">
+                💡 <strong>Advantage over linear models:</strong> Captures interaction effects (e.g., high usage + low support tickets = loyal). Small NN offers better accuracy with modest compute.
+            </div>
+        </div>
+
+        <!-- Tips: Debugging & Improving -->
+        <div class="card">
+            <h2>🐞 Debugging & Improving Your Small NN</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">🔍 Common pitfalls</div>
+                    <ul>
+                        <li>Loss not decreasing → learning rate too low/high, wrong loss function.</li>
+                        <li>Overfitting (gap train/val) → add dropout, reduce layers, increase data.</li>
+                        <li>Underfitting → increase model capacity, train longer.</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="subhead">✅ Best practices</div>
+                    <ul>
+                        <li>Normalize input data (zero mean, unit variance).</li>
+                        <li>Use validation split & early stopping callbacks.</li>
+                        <li>Monitor gradients (clip if exploding).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-block">
+# Early stopping callback in TF
+callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+model.fit(..., callbacks=[callback])
+            </div>
+        </div>
+
+        <!-- Summary: Where to go next -->
+        <div style="background: #ecfdf5; border-radius: 1.2rem; padding: 1.3rem 1.5rem; border-left: 6px solid #3b82f6; margin-top: 0.8rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🎯 Day 9 Core Takeaways — Building a Small NN with TF/PyTorch:</p>
+            <p>✔ <strong>What:</strong> A compact neural network with dense layers, activations, and an optimizer.<br>
+            ✔ <strong>Why:</strong> Learn deep learning mechanics, solve real classification/regression tasks, foundation for CNNs/RNNs.<br>
+            ✔ <strong>How:</strong> TensorFlow (Keras) for simplicity, PyTorch for flexibility. Both provide automatic differentiation and GPU support.<br>
+            ✔ <strong>Where:</strong> Prototyping, MNIST/fashion-MNIST, tabular data, churn prediction, sentiment analysis.<br>
+            ✔ Next step: Experiment with architectures, hyperparameters, move to CNNs and transformers. Deploy your model with TF Lite or TorchScript.</p>
+        </div>
+    </div>
+    <footer>
+        🧠 From perceptron to small neural networks — you're now equipped to build, train, and evaluate deep learning models using TensorFlow and PyTorch. Happy coding!
+    </footer>
+</div>
+</body>
+</html>
