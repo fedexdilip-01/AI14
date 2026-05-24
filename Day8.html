@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Neural Networks Basics: Perceptron & Activation Functions | Deep Learning Foundations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f3ff 0%, #e9e8f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.5;
+            color: #0f172a;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(125deg, #1e1b4b 0%, #3b2e7a 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            max-width: 800px;
+            margin: 0.75rem auto 0;
+            opacity: 0.92;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background: #8b5cf6;
+            color: #f5f3ff;
+            display: inline-block;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #eef2f8;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            font-size: 1.7rem;
+            font-weight: 650;
+            background: linear-gradient(120deg, #4c1d95, #db2777);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.9rem;
+            border-left: 5px solid #db2777;
+            padding-left: 1rem;
+        }
+
+        .subhead {
+            font-weight: 700;
+            color: #5b21b6;
+            font-size: 1.05rem;
+            margin: 0.9rem 0 0.3rem 0;
+        }
+
+        .insight-box {
+            background: #f5f3ff;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .example-box {
+            background: #fef9f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            border: 1px solid #ffe2bf;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #0b0f19;
+            color: #e2e8f0;
+            padding: 0.9rem 1rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .formula {
+            background: #ede9fe;
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            text-align: center;
+            font-weight: 500;
+            margin: 0.8rem 0;
+        }
+
+        .activation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.85rem;
+        }
+
+        .activation-table th, .activation-table td {
+            border: 1px solid #cbd5e1;
+            padding: 0.7rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .activation-table th {
+            background: #ede9fe;
+            font-weight: 700;
+        }
+
+        .highlight {
+            background: #fed7aa;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #9a3412;
+        }
+
+        .neuron-viz {
+            background: #fef9f2;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        hr {
+            margin: 1.2rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbd5e1, transparent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.3rem;
+            background: #fcfafe;
+            color: #4c1d95;
+        }
+
+        @media (max-width: 680px) {
+            .content {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🧠 Neural Networks Basics: Perceptron & Activation Functions</h1>
+        <p>The building blocks of deep learning — from biological inspiration to modern ReLU, Sigmoid, and beyond.</p>
+        <div class="badge">Day 8 — Foundations of Deep Learning</div>
+    </div>
+    <div class="content">
+
+        <!-- Perceptron deep dive -->
+        <div class="grid-2">
+            <div class="card">
+                <h2>⚡ Perceptron: The First Neural Unit</h2>
+                <div class="subhead">✦ What is it?</div>
+                <p>The perceptron is the simplest form of an artificial neuron. It takes multiple inputs, multiplies by weights, sums them, adds a bias, and passes through a step activation function to produce binary output.</p>
+                <div class="formula">output = step( Σ(wᵢ * xᵢ) + b )</div>
+                <div class="insight-box"><strong>🎯 Why perceptron matters?</strong> — It introduced the concept of learnable weights. Foundation of all modern neural architectures. Can model linear decision boundaries (AND, OR gates).</div>
+                <div class="example-box">
+                    <strong>💡 Example: AND Gate</strong><br>
+                    x1, x2 ∈ {0,1}, output = 1 only if both are 1.<br>
+                    Trained perceptron: weights [0.5, 0.5], bias -0.8 → Σ = 0.5+0.5-0.8=0.2 → output 1. Works!
+                </div>
+                <div class="code-block">
+                    # Perceptron update rule (simplified)<br>
+                    for epoch in range(epochs):<br>
+                    &nbsp;&nbsp; for x, y_true in dataset:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; y_pred = step(w·x + b)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; error = y_true - y_pred<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; w += learning_rate * error * x<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp; b += learning_rate * error
+                </div>
+                <p><strong>⚠️ Limitation:</strong> Single perceptron cannot solve XOR (non-linearly separable). This led to multi-layer perceptrons (MLPs).</p>
+            </div>
+
+            <div class="card">
+                <h2>🎭 Activation Functions: The Non-Linear Magic</h2>
+                <div class="subhead">✦ What are they?</div>
+                <p>Activation functions introduce non-linearity into neural networks, allowing them to learn complex patterns. Without them, stacking layers would be equivalent to a single linear transformation.</p>
+                <div class="insight-box"><strong>🎯 Why crucial?</strong> — Non-linearity enables universal approximation: neural nets can model any continuous function given enough neurons.</div>
+                <div class="example-box">
+                    <strong>💡 Analogy:</strong> Linear functions are like straight lines; activations bend the decision boundary to capture spirals, curves, intricate patterns in data.
+                </div>
+                <div class="code-block">
+                    # Common activations in PyTorch/TensorFlow<br>
+                    import torch.nn as nn<br>
+                    nn.ReLU(), nn.Sigmoid(), nn.Tanh(), nn.LeakyReLU()
+                </div>
+            </div>
+        </div>
+
+        <!-- activation functions deep reference -->
+        <div class="card">
+            <h2>🔥 Activation Functions: Deep Reference (What / Why / Where)</h2>
+            <table class="activation-table">
+                <thead>
+                    <tr><th>Function</th><th>Formula</th><th>Why (pros)</th><th>Cons</th><th>Where used</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Sigmoid</strong></td><td>σ(x) = 1/(1+e⁻ˣ)</td><td>Smooth, outputs (0,1) → probability. Historically popular.</td><td>Vanishing gradient, not zero-centered, saturated neurons.</td><td>Output layer for binary classification, early RNNs.</td></tr>
+                    <tr><td><strong>Tanh</strong></td><td>tanh(x) = (eˣ - e⁻ˣ)/(eˣ+e⁻ˣ)</td><td>Zero-centered, stronger gradients than sigmoid.</td><td>Still suffers from vanishing gradients for deep nets.</td><td>Hidden layers in older architectures, some RNN cells.</td></tr>
+                    <tr><td><strong>ReLU</strong></td><td>max(0, x)</td><td>Computationally cheap, no saturation in positive region, mitigates vanishing gradient.</td><td>Dying ReLU (neurons stuck at zero if x<0 always).</td><td>Most modern CNNs, MLPs, default for hidden layers.</td></tr>
+                    <tr><td><strong>Leaky ReLU</strong></td><td>max(αx, x) with α small</td><td>Fixes dying ReLU, allows small negative gradient.</td><td>Extra hyperparameter α, not always better.</td><td>GANs, deep residual networks, robust tasks.</td></tr>
+                    <tr><td><strong>Softmax</strong></td><td>eˣⁱ / Σ eˣʲ</td><td>Outputs probability distribution over classes.</td><td>Sensitive to outliers.</td><td>Output layer for multi-class classification.</td></tr>
+                </tbody>
+            </table>
+            <div class="neuron-viz">
+                📈 <strong>Rule of thumb:</strong> Use ReLU for hidden layers as default. For final layer: sigmoid (binary), softmax (multi-class), linear (regression).
+            </div>
+        </div>
+
+        <!-- Multi-layer perceptron & how non-linearity enables depth -->
+        <div class="card">
+            <h2>🧩 From Perceptron to Multi-Layer Perceptron (MLP)</h2>
+            <p>A single perceptron is linear. Stacking layers with non-linear activations creates a universal function approximator.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">✨ XOR problem solved by MLP</div>
+                    <p>XOR is not linearly separable. With one hidden layer (2 neurons, ReLU activation) + output sigmoid, MLP learns XOR perfectly. Hidden layer transforms input space, making it separable.</p>
+                    <div class="code-block">
+                        # Simple MLP for XOR using Keras<br>
+                        model = Sequential([<br>
+                        &nbsp; Dense(2, activation='relu', input_shape=(2,)),<br>
+                        &nbsp; Dense(1, activation='sigmoid') ])
+                    </div>
+                </div>
+                <div>
+                    <div class="subhead">📌 Why activation matters in deep networks</div>
+                    <p>Without activation (linear), deep net collapses to one linear transformation. Non-linear activations allow each layer to learn increasingly abstract features (edges → shapes → objects).</p>
+                    <div class="insight-box">🎯 <strong>Where used:</strong> Image recognition, speech, NLP — every deep neural network relies on activations for hierarchical learning.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case Study: Building a Binary Classifier with Perceptron vs Modern NN -->
+        <div class="card">
+            <h2>🔬 Case Study: Spam Detection — Perceptron vs Neural Network with Activations</h2>
+            <p><strong>Dataset:</strong> Email features (word frequencies). Single perceptron gives linear boundary; MLP with ReLU hidden layers can model complex patterns like suspicious combinations of words.</p>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">📉 Perceptron limitations</div>
+                    <p>Linear boundary: can separate if spam words are simple additive. Fails if non-linear interactions exist (e.g., "free" + "winner" only spam together). Perceptron accuracy ~78%.</p>
+                </div>
+                <div>
+                    <div class="subhead">🚀 MLP with ReLU & Sigmoid</div>
+                    <p>Hidden layer (128 neurons, ReLU) learns non-linear combinations. Output sigmoid produces probability. Accuracy reaches 94% — captures interactions.</p>
+                </div>
+            </div>
+            <div class="code-block">
+                # MLP classifier with modern activations<br>
+                from sklearn.neural_network import MLPClassifier<br>
+                mlp = MLPClassifier(hidden_layer_sizes=(128,64), activation='relu',<br>
+                &nbsp;&nbsp;&nbsp;&nbsp; solver='adam', max_iter=300)
+            </div>
+            <div class="insight-box">💡 <strong>Key lesson:</strong> Activation functions + depth transform raw features into rich representations — essential for real-world performance.</div>
+        </div>
+
+        <!-- What/Why/How/Where summary table -->
+        <div class="card">
+            <h2>📋 What, Why, How, Where: Neural Network Basics</h2>
+            <table class="activation-table">
+                <thead><tr><th>Concept</th><th>What</th><th>Why</th><th>How (implementation)</th><th>Where (domain)</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Perceptron</strong></td><td>Single neuron with step activation, binary output.</td><td>Historical foundation, linear classification baseline.</td><td>Manual weight updates or SGD, step function.</td><td>Simple logic gates, linear separability problems.</td></tr>
+                    <tr><td><strong>Activation Functions</strong></td><td>Non-linear transformations applied to weighted sum.</td><td>Enable deep networks to learn complex patterns, solve XOR, power modern AI.</td><td>ReLU (hidden), Sigmoid (binary output), Softmax (multi-class).</td><td>Every neural net: computer vision, NLP, reinforcement learning.</td></tr>
+                    <tr><td><strong>Multi-Layer Perceptron</strong></td><td>Stack of perceptrons with non-linear activations.</td><td>Universal approximator, captures feature hierarchies.</td><td>Backpropagation + gradient descent, hidden layer sizes.</td><td>Classification, regression, feature extraction, autoencoders.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Vanishing Gradient & Modern Solutions -->
+        <div class="card">
+            <h2>⚠️ Activation Challenges: Vanishing Gradients & Dying ReLU</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="subhead">🌊 Vanishing Gradient (Sigmoid/Tanh)</div>
+                    <p>In deep networks, gradients become tiny, early layers stop learning. Solution: ReLU family, residual connections, batch norm.</p>
+                </div>
+                <div>
+                    <div class="subhead">💀 Dying ReLU</div>
+                    <p>Neurons output zero for all inputs (negative slope 0). Solution: LeakyReLU, ELU, or Parametric ReLU.</p>
+                </div>
+            </div>
+            <div class="example-box">
+                <strong>🔧 Modern best practices:</strong> Use <span class="highlight">ReLU</span> for most hidden layers. If you see dead neurons, try <span class="highlight">LeakyReLU</span>. For output, always match task: linear (regression), sigmoid (binary), softmax (multi-class).
+            </div>
+        </div>
+
+        <!-- Where in industry: real-world impact -->
+        <div class="card">
+            <h2>🌍 Where do Perceptron & Activations Power Real Systems?</h2>
+            <ul style="margin-left: 1.5rem; list-style: disc;">
+                <li><strong>Computer Vision:</strong> CNNs use ReLU activations for fast training & sparse features. Detect edges, objects, faces.</li>
+                <li><strong>Natural Language Processing:</strong> Transformers use GELU / ReLU in feed-forward layers. Enables BERT, GPT.</li>
+                <li><strong>Robotics:</strong> Perceptron-like decision units in control systems; deep policies use tanh for action space.</li>
+                <li><strong>Healthcare:</strong> MLP with ReLU predicts patient risk from EHR data.</li>
+            </ul>
+            <div class="code-block">
+                # Example: Neural network with Keras (activation showcase)<br>
+                model = tf.keras.Sequential([<br>
+                &nbsp; Dense(128, activation='relu', input_shape=(784,)),<br>
+                &nbsp; Dropout(0.2),<br>
+                &nbsp; Dense(10, activation='softmax')   # multi-class output<br>
+                ])
+            </div>
+            <div class="insight-box">🎯 <strong>From Perceptron to GPT-4:</strong> Activation non-linearity remains the secret sauce that unlocks deep learning's power to model the world.</div>
+        </div>
+
+        <!-- Quick intuitive demo of perceptron update -->
+        <div class="card">
+            <h2>🧪 Hands-on Intuition: Learning the OR Gate with a Perceptron</h2>
+            <div class="grid-2">
+                <div>
+                    <p>Weights initialized to 0, bias 0. Learning rate=0.1. After first sample (0,0 → 0) no update. Sample (1,0 → 1): compute y_pred = step(0) = 0, error=1. Update: w1 += 0.1*1*1 = 0.1. Iterate → converges to w = [0.2, 0.2], b=-0.1. OR function learned!</p>
+                </div>
+                <div class="neuron-viz">
+                    ✅ Modern neural networks perform similar updates via backpropagation but across millions of parameters.
+                </div>
+            </div>
+        </div>
+
+        <!-- Final takeaways -->
+        <div style="background: #f0fdf4; border-radius: 1.2rem; padding: 1.3rem 1.5rem; border-left: 6px solid #8b5cf6; margin-top: 0.8rem;">
+            <p style="font-weight: 700; font-size: 1.05rem;">🧠 Day 8 Core Takeaways — Neural Network Foundations:</p>
+            <p>✔ <strong>Perceptron</strong> = linear classifier → limited but essential building block.<br>
+            ✔ <strong>Activation Functions</strong> = non-linear heart of deep learning → ReLU, Sigmoid, Tanh, Softmax.<br>
+            ✔ <strong>Why non-linearity?</strong> Without it, deep networks collapse to shallow linear models.<br>
+            ✔ <strong>How to choose:</strong> ReLU for hidden layers (default), sigmoid/softmax for output based on task.<br>
+            ✔ <strong>Where applied:</strong> Every modern AI system — from image recognition to large language models. Master these basics to unlock deep learning!</p>
+        </div>
+    </div>
+    <footer>
+        🧬 Perceptron → Activation Functions → Deep Networks. The neuron-inspired revolution that powers today's artificial intelligence.
+    </footer>
+</div>
+</body>
+</html>
