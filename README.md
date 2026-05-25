@@ -18,3 +18,4 @@
 ##Other Topic-
 <h2>Transformer Architecture  </h2> https://fedexdilip-01.github.io/AI14/transformer.html </br>
 <h2>AI/ML Architecture  </h2> https://fedexdilip-01.github.io/AI14/ai_architecture.html </br>
+<h2>AI/ML Model Training  </h2> https://fedexdilip-01.github.io/AI14/model.html </br>
