@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Transformer AI Architecture: Complete Guide + Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1F3A5F, #2D6A8F);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.01em;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #2c4e6e;
+            margin-top: 0.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* diagram grid */
+        .arch-diagram {
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            padding: 1.8rem 1.5rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(72, 149, 189, 0.2);
+        }
+
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+            font-family: 'Inter', monospace;
+            cursor: pointer;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* cards grid for components */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 1.8rem;
+            margin: 2.5rem 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s ease;
+            overflow: hidden;
+            border: 1px solid #e2edf2;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 28px -12px rgba(28, 65, 89, 0.2);
+            border-color: #bdd9e6;
+        }
+
+        .card-header {
+            background: #f0f7fb;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 3px solid #2c7da0;
+        }
+
+        .card-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f4e6e;
+            letter-spacing: -0.2px;
+        }
+
+        .card-header .sub {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #2c7da0;
+            text-transform: uppercase;
+            margin-top: 0.25rem;
+        }
+
+        .card-body {
+            padding: 1.3rem 1.5rem 1.6rem;
+        }
+
+        .card-body p {
+            margin-bottom: 1rem;
+            line-height: 1.45;
+            color: #1f3445;
+        }
+
+        .card-body strong {
+            color: #145c7a;
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .badge {
+            background: #e6f2f7;
+            padding: 0.25rem 0.85rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #145c7a;
+        }
+
+        .usecase-section {
+            background: #e9f1f5;
+            border-radius: 1.5rem;
+            padding: 1.8rem 2rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .usecase-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1a4c6e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .usecase-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            justify-content: space-between;
+        }
+
+        .usecase-card {
+            background: white;
+            border-radius: 1.2rem;
+            flex: 1 1 260px;
+            padding: 1.2rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
+            transition: 0.2s;
+            border-left: 5px solid #2c7da0;
+        }
+
+        .usecase-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f5e7e;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, #cbdde6, transparent);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #5b7f95;
+        }
+
+        @media (max-width: 750px) {
+            body {
+                padding: 1rem;
+            }
+            .hero h1 {
+                font-size: 1.9rem;
+            }
+            .card-header h3 {
+                font-size: 1.3rem;
+            }
+        }
+        .tooltip-svg {
+            transition: all 0.1s;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🧠 Transformer Architecture</h1>
+        <p>“Attention Is All You Need” — Complete breakdown: What, Why, How, Where & Real‑world Use Cases</p>
+    </div>
+
+    <!-- interactive diagram (SVG with labeled components) -->
+    <div class="arch-diagram">
+        <div class="svg-container">
+            <svg viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" style="background: #ffffff; border-radius: 1.2rem;">
+                <defs>
+                    <linearGradient id="gradEnc" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#d9eaf3" />
+                        <stop offset="100%" stop-color="#bddae9" />
+                    </linearGradient>
+                    <linearGradient id="gradDec" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f8e3d9" />
+                        <stop offset="100%" stop-color="#f2cfbf" />
+                    </linearGradient>
+                    <filter id="shadow" x="-4%" y="-4%" width="112%" height="112%">
+                        <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+                    </filter>
+                </defs>
+
+                <!-- Background groups -->
+                <!-- Encoder Block -->
+                <rect x="60" y="60" width="360" height="380" rx="24" fill="url(#gradEnc)" stroke="#4f8aa8" stroke-width="1.5" stroke-dasharray="4 2" filter="url(#shadow)"/>
+                <text x="240" y="42" text-anchor="middle" font-weight="bold" fill="#1f5e7e" font-size="15">📡 ENCODER (stacked Nx)</text>
+
+                <!-- Decoder Block -->
+                <rect x="540" y="60" width="360" height="380" rx="24" fill="url(#gradDec)" stroke="#c0865f" stroke-width="1.5" stroke-dasharray="4 2" filter="url(#shadow)"/>
+                <text x="720" y="42" text-anchor="middle" font-weight="bold" fill="#9b5e3c" font-size="15">🎛️ DECODER (stacked Nx)</text>
+
+                <!-- ENCODER sub-components -->
+                <rect x="90" y="100" width="300" height="52" rx="12" fill="#F4F9FE" stroke="#2c7da0" stroke-width="1.8" filter="url(#shadow)"/>
+                <text x="140" y="133" font-weight="600" fill="#0b3b4f" font-size="13">Input Embedding + Positional Encoding</text>
+
+                <rect x="90" y="175" width="300" height="60" rx="12" fill="#fff" stroke="#3584a8" stroke-width="1.5" filter="url(#shadow)"/>
+                <text x="240" y="200" text-anchor="middle" font-weight="700" fill="#0a4c68" font-size="13">Multi-Head Self-Attention</text>
+                <text x="240" y="218" text-anchor="middle" font-size="10" fill="#547e96">(LayerNorm + Residual)</text>
+
+                <rect x="90" y="255" width="300" height="60" rx="12" fill="#fff" stroke="#3584a8" stroke-width="1.5" filter="url(#shadow)"/>
+                <text x="240" y="280" text-anchor="middle" font-weight="700" fill="#0a4c68" font-size="13">Feed‑Forward Network (FFN)</text>
+                <text x="240" y="298" text-anchor="middle" font-size="10" fill="#547e96">(ReLU/GELU, 2 linear)</text>
+
+                <rect x="90" y="340" width="300" height="45" rx="12" fill="#edf5f9" stroke="#3584a8" stroke-width="1.2" stroke-dasharray="3 2"/>
+                <text x="240" y="368" text-anchor="middle" font-size="11" font-weight="500" fill="#306f8c">Add & Norm (each sub-layer)</text>
+
+                <!-- Encoder output arrow to decoder -->
+                <path d="M 440 290 L 520 290" stroke="#5f9db8" stroke-width="2.5" marker-end="url(#arrowEnc)" fill="none"/>
+                <defs><marker id="arrowEnc" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5f9db8"/></marker></defs>
+                <text x="478" y="275" text-anchor="middle" fill="#2c7da0" font-size="9" font-weight="bold">encoder outputs</text>
+
+                <!-- DECODER sub-components -->
+                <rect x="570" y="100" width="300" height="52" rx="12" fill="#FCF6F0" stroke="#b5784e" stroke-width="1.8" filter="url(#shadow)"/>
+                <text x="720" y="125" text-anchor="middle" font-weight="600" fill="#764d2c" font-size="13">Output Embedding (shifted right) + PosEnc</text>
+
+                <rect x="570" y="175" width="300" height="60" rx="12" fill="#fff" stroke="#b5784e" stroke-width="1.5" filter="url(#shadow)"/>
+                <text x="720" y="197" text-anchor="middle" font-weight="700" fill="#764d2c" font-size="13">Masked Multi-Head Self-Attention</text>
+                <text x="720" y="216" text-anchor="middle" font-size="10" fill="#a16e48">(prev tokens only)</text>
+
+                <rect x="570" y="255" width="300" height="60" rx="12" fill="#fff" stroke="#b5784e" stroke-width="1.5" filter="url(#shadow)"/>
+                <text x="720" y="278" text-anchor="middle" font-weight="700" fill="#764d2c" font-size="13">Cross-Attention (Encoder-Decoder)</text>
+                <text x="720" y="296" text-anchor="middle" font-size="10" fill="#a16e48">queries: decoder, keys/values: encoder</text>
+
+                <rect x="570" y="340" width="300" height="45" rx="12" fill="#FDF2ea" stroke="#b5784e" stroke-width="1.2" stroke-dasharray="3 2"/>
+                <text x="720" y="368" text-anchor="middle" font-size="11" font-weight="500" fill="#a36338">Add & Norm + FFN</text>
+
+                <!-- Final output layer -->
+                <rect x="650" y="420" width="140" height="38" rx="20" fill="#2c7da0" stroke="#1f5e7e" stroke-width="1.2" filter="url(#shadow)"/>
+                <text x="720" y="444" text-anchor="middle" fill="white" font-weight="bold" font-size="12">Linear + Softmax</text>
+
+                <path d="M 720 385 L 720 414" stroke="#9b5e3c" stroke-width="2" marker-end="url(#arrowEnd)"/>
+                <defs><marker id="arrowEnd" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9b5e3c"/></marker></defs>
+
+                <!-- Side labels and attention flow icon -->
+                <text x="55" y="470" font-size="10" fill="#678fa3">Inputs: tokens (src)</text>
+                <text x="830" y="475" font-size="10" fill="#b86f44">Outputs: token probs (tgt)</text>
+                <circle cx="490" cy="200" r="20" fill="#FFF5E6" stroke="#ddbb99" stroke-width="1.2"/>
+                <text x="490" y="204" text-anchor="middle" font-size="12" fill="#b96f42">⚡</text>
+                <text x="490" y="234" text-anchor="middle" font-size="8" fill="#a16944">Attention</text>
+            </svg>
+        </div>
+        <div class="legend">
+            <span>🔵 Encoder (understand input)</span>
+            <span>🟠 Decoder (generate output)</span>
+            <span>💠 Attention mechanism</span>
+            <span>➕ Residual + Normalization</span>
+        </div>
+    </div>
+
+    <!-- Detailed component cards: What, Why, How, Where -->
+    <div class="components-grid">
+        <!-- Input Embedding + Positional Encoding -->
+        <div class="card">
+            <div class="card-header"><h3>📥 Input Embedding + Positional Encoding</h3><div class="sub">what · why · how · where</div></div>
+            <div class="card-body">
+                <p><strong>What:</strong> Converts token IDs into dense vectors + adds position signals. Since Transformer is non-recurrent, it needs position information.</p>
+                <p><strong>Why:</strong> Captures word meaning (embedding) and order information (positional encoding) — crucial for language structure.</p>
+                <p><strong>How:</strong> Learned embedding matrix + sinusoidal functions (or learned positional). Added element-wise.</p>
+                <p><strong>Where:</strong> At the very entrance of encoder & decoder stacks.</p>
+                <div class="badge-group"><span class="badge">🧩 Token → vector</span><span class="badge">📍 sequence order</span></div>
+            </div>
+        </div>
+        <!-- Multi-Head Self-Attention (Encoder) -->
+        <div class="card">
+            <div class="card-header"><h3>🔄 Multi-Head Self-Attention</h3><div class="sub">core mechanism</div></div>
+            <div class="card-body">
+                <p><strong>What:</strong> Allows each token to attend to all other tokens in the same sequence, computing weighted relevance.</p>
+                <p><strong>Why:</strong> Captures long-range dependencies, contextual relationships, and parallel processing (unlike RNNs).</p>
+                <p><strong>How:</strong> Splits Q, K, V into ‘h’ heads, computes scaled dot-product attention, concatenates outputs.</p>
+                <p><strong>Where:</strong> In both encoder and decoder (self-attention) and cross-attention modules.</p>
+                <div class="badge-group"><span class="badge">✨ Attention(Q,K,V)</span><span class="badge">📈 h=8/12/16</span></div>
+            </div>
+        </div>
+        <!-- Feed-Forward Network -->
+        <div class="card">
+            <div class="card-header"><h3>⚙️ Feed-Forward Network (FFN)</h3><div class="sub">position‑wise MLP</div></div>
+            <div class="card-body">
+                <p><strong>What:</strong> Two linear layers with a non-linearity (ReLU/GELU) applied to each position separately.</p>
+                <p><strong>Why:</strong> Adds non-linear transformations and capacity to learn complex patterns after attention mixes information.</p>
+                <p><strong>How:</strong> FFN(x) = max(0, xW₁ + b₁)W₂ + b₂. Expands inner dimension (typically 4x model dim).</p>
+                <p><strong>Where:</strong> After each attention sub-layer, both encoder & decoder.</p>
+                <div class="badge-group"><span class="badge">🧠 nonlinearity</span><span class="badge">📊 expands then contracts</span></div>
+            </div>
+        </div>
+        <!-- Residual & LayerNorm -->
+        <div class="card">
+            <div class="card-header"><h3>➕ Add & LayerNorm</h3><div class="sub">stabilize training</div></div>
+            <div class="card-body">
+                <p><strong>What:</strong> Residual connection (skip connection) followed by layer normalization.</p>
+                <p><strong>Why:</strong> Residuals prevent vanishing gradients and allow deep stacks; LayerNorm speeds convergence & stabilizes.</p>
+                <p><strong>How:</strong> output = LayerNorm(x + Sublayer(x)). Applied around each attention & FFN.</p>
+                <p><strong>Where:</strong> After every multi-head attention and FFN sub-layer.</p>
+                <div class="badge-group"><span class="badge">🏗️ skip connection</span><span class="badge">📐 stable gradients</span></div>
+            </div>
+        </div>
+        <!-- Masked Self-Attention (Decoder) -->
+        <div class="card">
+            <div class="card-header"><h3>🎭 Masked Self-Attention</h3><div class="sub">causal / autoregressive</div></div>
+            <div class="card-body">
+                <p><strong>What:</strong> Prevents decoder from attending to future tokens during training via a look-ahead mask.</p>
+                <p><strong>Why:</strong> Ensures auto-regressive property — predictions depend only on previous outputs.</p>
+                <p><strong>How:</strong> Sets attention scores for illegal positions to -inf before softmax.</p>
+                <p><strong>Where:</strong> First attention sub-layer in decoder block.</p>
+                <div class="badge-group"><span class="badge">🚫 future masking</span><span class="badge">🔮 text generation</span></div>
+            </div>
+        </div>
+        <!-- Cross-Attention (Encoder-Decoder) -->
+        <div class="card">
+            <div class="card-header"><h3>🔁 Cross-Attention</h3><div class="sub">bridge encoder→decoder</div></div>
+            <div class="card-body">
+                <p><strong>What:</strong> Decoder queries attend to encoder key-value pairs, aligning output with input representation.</p>
+                <p><strong>Why:</strong> Enables sequence-to-sequence tasks (translation, summarization) where output relies on full input context.</p>
+                <p><strong>How:</strong> Queries from decoder, keys/values from encoder output. Multi-head attention identical to self-attention.</p>
+                <p><strong>Where:</strong> Middle sub-layer in each decoder block.</p>
+                <div class="badge-group"><span class="badge">🌉 seq2seq bridge</span><span class="badge">📚 context fusion</span></div>
+            </div>
+        </div>
+        <!-- Final Linear + Softmax -->
+        <div class="card">
+            <div class="card-header"><h3>📤 Linear + Softmax</h3><div class="sub">output probabilities</div></div>
+            <div class="card-body">
+                <p><strong>What:</strong> Projects decoder output to vocabulary size, then softmax yields token probabilities.</p>
+                <p><strong>Why:</strong> Converts hidden states into interpretable predictions for next token generation.</p>
+                <p><strong>How:</strong> Linear layer (vocab_dim × d_model) + log_softmax for cross-entropy loss.</p>
+                <p><strong>Where:</strong> Top of the decoder stack, just before output sequence.</p>
+                <div class="badge-group"><span class="badge">🎯 prediction head</span><span class="badge">📈 token probabilities</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Use Cases Section: where is Transformer used? with detailed real examples -->
+    <div class="usecase-section">
+        <h2>🚀 Real‑world Use Cases <span style="font-size:1.2rem;">→ Where Transformers excel</span></h2>
+        <div class="usecase-flex">
+            <div class="usecase-card"><h4>📝 Machine Translation</h4><p>Google Translate, DeepL — encoder-decoder Transformer maps source language to target. Attention aligns phrases across languages.</p><span class="badge">Seq2Seq + cross-attention</span></div>
+            <div class="usecase-card"><h4>🤖 Generative AI (GPT)</h4><p>Decoder-only Transformers power ChatGPT, GPT-4, code generation (Copilot). Autoregressive generation with masked self-attention.</p><span class="badge">Causal LM, zero/few-shot</span></div>
+            <div class="usecase-card"><h4>📄 Document Summarization</h4><p>BART, Pegasus: long document → concise summary. Leverages encoder to understand full text and decoder to generate abstract.</p><span class="badge">Abstractive summary</span></div>
+            <div class="usecase-card"><h4>🎙️ Speech & Audio (Whisper)</h4><p>Speech-to-text Transformer processes spectrograms as input tokens, encoder attends over audio frames.</p><span class="badge">Cross-modal attention</span></div>
+            <div class="usecase-card"><h4>🖼️ Vision Transformer (ViT)</h4><p>Image classification by splitting image into patches → linear embedding → encoder. Outperforms CNNs on large datasets.</p><span class="badge">Computer Vision</span></div>
+            <div class="usecase-card"><h4>⚗️ Protein Folding (AlphaFold2)</h4><p>Evolutionary-scale transformer architecture to predict 3D protein structures from sequences.</p><span class="badge">Bioinformatics</span></div>
+        </div>
+        <hr />
+        <div style="background:#fff6e8; border-radius: 1rem; padding: 1rem; margin-top: 0.5rem;">
+            <p style="display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: baseline; margin-bottom: 0;"><strong style="color:#1f5e7e;">💡 Why Transformer dominates:</strong> <span>✔️ Full parallelization (unlike RNNs)  ✔️ Superior long-range dependency modeling  ✔️ Scalable to billions of parameters  ✔️ Transfer learning (BERT, GPT, T5).</span></p>
+        </div>
+    </div>
+
+    <!-- Additional details: encoder-decoder summary stack -->
+    <div style="background: white; border-radius: 1.5rem; padding: 1.2rem 1.8rem; margin: 1rem 0 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <h3 style="color: #1f5e7e; font-weight: 600;">🧩 Transformer Architecture Overview — "Attention Is All You Need" (Vaswani et al. 2017)</h3>
+        <p style="margin-top: 0.6rem;">The model consists of an <strong>encoder stack</strong> (typically 6 layers) and a <strong>decoder stack</strong> (6 layers). Each encoder layer: Multi-Head Self-Attention + FFN, each with residual & layer norm. Each decoder layer: Masked Self-Attention → Cross-Attention (Encoder-Decoder) → FFN. Positional encodings inject order. The entire architecture powers virtually all modern LLMs. <br> 
+        <strong>Training objective:</strong> Next token prediction (decoder) / masked language modeling (BERT encoder). The transformer replaced recurrence with pure attention, enabling GPU-efficient scaling. </p>
+        <div class="badge-group" style="margin-top: 8px;">
+            <span class="badge">🔥 1.8B to 500B parameters</span>
+            <span class="badge">⚡ parallel training</span>
+            <span class="badge">📌 BERT, GPT, T5, Llama</span>
+        </div>
+    </div>
+    <footer>
+        Interactive Transformer Map — Each component answers <strong>What · Why · How · Where</strong>.
+    </footer>
+</div>
+</body>
+</html>
