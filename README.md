@@ -14,3 +14,6 @@
 <h2>12‑Day -LLMs & Prompt Engineering: GPT, Claude, Llama </h2> https://fedexdilip-01.github.io/AI14/Day12.html
 <h2>13‑Day -Build a Simple RAG App: Retrieval-Augmented Generation </h2> https://fedexdilip-01.github.io/AI14/Day13.html
 <h2>14‑Day - AI Ethics, Bias Mitigation & Final Mini-Project </h2> https://fedexdilip-01.github.io/AI14/Day14.html
+
+#Other Topic
+<h2>Transformer Architecture  </h2> https://fedexdilip-01.github.io/AI14/transformer.html </br>
